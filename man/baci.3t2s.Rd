@@ -5,7 +5,7 @@
 \alias{baci.3t2s}
 \title{Dataset For Testing a Beyond BACI Design}
 \format{
-A dataframe with 288 rows and 8 collumns.
+A dataframe with 288 rows and 8 columns.
 }
 \source{
 Created in-house to serve as an example.

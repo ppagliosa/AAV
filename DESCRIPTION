@@ -1,24 +1,32 @@
-Package: AAV
 Type: Package
+Package: AAV
 Title: Asymmetrical Analysis of Variance to Detect Ecological Impacts
 Version: 0.1.0
 Date: 2025-05-20
-Author: person(given = "Paulo", family = "Pagliosa",
-                    role = c("aut", "cre"),
-                    email = "paulo.pagliosa@ufsc.br",
-                    comment = c(ORCID = "0000-0003-0834-2534"))
+Author: person(given = "Paulo", family = "Pagliosa", role = c("aut",
+    "cre"), email = "paulo.pagliosa@ufsc.br", comment = c(ORCID =
+    "0000-0003-0834-2534"))
 Maintainer: Paulo Pagliosa <paulo.pagliosaf@ufsc.br>
-Description: Provides analyses for asymmetrical ANOVA models from 
-    beyond BACI (before/after-control/impact) design with multiple control locations, 
-    post-impact design with only one disturbed location and multiple control locations, 
-    or post-impact design with more than one place with one disturbed location 
-    and multiple control locations. For more details see 
-    Underwood (1993) <doi:10.1111/j.1442-9993.1993.tb00437.x> and Glasby (1997) <doi:10.1111/j.1442-9993.1997.tb00696.x>. 
+Description: Provides analyses for asymmetrical ANOVA models from Beyond
+    BACI (before/after-control/impact) design with multiple control
+    locations, Post-Impact design with only one disturbed location and
+    multiple control locations, or Post-Impact design with more than one
+    place with one disturbed location and multiple control locations. For
+    more details see Underwood (1993)
+    <doi:10.1111/j.1442-9993.1993.tb00437.x> and Glasby (1997)
+    <doi:10.1111/j.1442-9993.1997.tb00696.x>.
 License: GPL (>= 3)
+URL: https://github.com/ppagliosa/AAV
+BugReports: https://github.com/ppagliosa/AAV/issues
+Depends: 
+    R (>= 3.5)
+Imports: 
+    GAD,
+    dplyr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
 Roxygen: list(old_usage = TRUE, markdown = TRUE)
+RoxygenNote: 7.3.2
 Collate: 
     'AAV-package.R'
     'sym4asym.R'
@@ -26,12 +34,3 @@ Collate:
     'asym.aci.R'
     'aav.R'
     'data.R'
-Imports: 
-    GAD,
-    dplyr,
-    openxlsx,
-    stats
-URL: 
-BugReports:
-Depends: 
-    R (>= 3.5)

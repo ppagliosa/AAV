@@ -9,15 +9,15 @@ asym.baci(data, n.ftemp, n.fspac, names.impact, names.before = NULL, sym.F,
   p.pooling = 0.25)
 }
 \arguments{
-\item{data}{a data frame with temporal factors and spatial factors.}
+\item{data}{a data frame with temporal factors, spatial factors and variable(s).}
 
 \item{n.ftemp}{number of temporal factors.}
 
 \item{n.fspac}{number of spatial factors.}
 
-\item{names.impact}{name of the asymmetrical level of the Control/Impact factor (e.g. "impact").}
+\item{names.impact}{name of the asymmetrical level of the Location factor (e.g. 'impact').}
 
-\item{names.before}{name of the before level of the Before/After factor (e.g. "before").}
+\item{names.before}{Name of the before level of the Before/After factor (e.g. 'before').}
 
 \item{sym.F}{an object containing the results returned by \code{sym4asym} function or
 an symmetrical analysis of variance table run with all the data,
@@ -37,88 +37,102 @@ and the asymmetrical data.}
 
 \item{p.aav}{level of significance for the asymmetrical ANOVA. Default is \code{0.05}.}
 
-\item{pooling}{remove a term from the analyse using a post-hoc pooling procedure. Default is \code{TRUE}.}
+\item{pooling}{remove a term from the analysis using a post-hoc pooling procedure. Default is \code{TRUE}.}
 
-\item{method}{only when \code{pooling = TRUE}, \code{pool} to pool a term or a set of terms with zero contribution to the model or
+\item{method}{only when \code{pooling = TRUE}.
+Method to be used for the pooling procedure.
+\code{pool} to pool a term or a set of terms with zero contribution to the model or
 \code{eliminate} to completely exclude a term from the model. Default is \code{pool}.}
 
 \item{p.pooling}{only when \code{pooling = TRUE}.
 Level of significance for the pooling procedure. Default is \code{0.25}.}
 }
 \value{
-A \code{data frame} containing an asymmetrical ANOVA table.
+The function returns a list containing the following items:
+\item{sym.anova}{the symmetrical ANOVA tables used for running asymmetrical ANOVAs.}
+\item{asym.anova_final}{the final asymmetrical ANOVA tables.
+The 'final table' is a typical ANOVA table
+('Source.of.Variation','Df', 'Sum.Sq','Mean.Sq','F.value','P.Value.Upper.Tail','P.Value.Lower.Tail')
+with the partitioning of the variance components between control and impacts
+groups and between before and after disturbance groups (only for BACI designs).
+The 'final table' has two additional step-by-step elements:
+a 'Next.Step' that indicates where to go from here, according to the
+calculation of the mean square estimates for that term,
+and an 'Interpretation' that states the results found.
+There is no 'P.Value.Lower.Tail' for the a post-impact design with more than
+one place with one disturbed location. For beyond BACI design 'P.Value.Lower.Tail'
+appears only when there is a valid test for a two-tailed analysis.}
+\item{asym.anova_complete}{the complete asymmetrical ANOVA tables.
+The 'complete table' presents all elements used in the asymmetrical analysis,
+with the 'final table' elements plus:
+The complement for a two-tailed analysis ('P.Value.Lower.Tail');
+the degrees of freedom formula ('Df.Formula');
+from which symmetrical ANOVA derived the SS and Df values ('Calculated.From');
+who is the denominator to the calculus of the F-ratio for that term ('Denominator');
+the Df, SS and MS for the pooled term(s) ('Df.Pooled','Sum.Sq.Pooled','Mean.Sq.Pooled');
+based on the \code{p.aav} and \code{p.pooling} values, a statement if that term is significant,
+non-significant or can be eliminated ('Significant');
+based on the \code{p.pooling} value and the mean square estimates, a statement on
+which of the possible pooled term were used ('Post.Hoc.Pooling');
+some designs has two-tailed analysis ('P.Value.Lower.Tail').}
+
+When analysing more than one variable at once, the results for each variable
+appear in the sublists.
 }
 \description{
-Calculate an asymmetrical ANOVA from beyond BACI (before/after-control/impact) design
+Provides an asymmetrical ANOVA from beyond BACI (before/after-control/impact) design
 for models with 2 or 3 temporal factors and with 1 or 2 spatial factors.
 }
 \details{
-The construction of asymmetrical analyses of variance consists of combining
+Asymmetrical analyses of variance are constructed by combining
 the Sum of Squares values from separate (symmetrical) ANOVAs.
-In beyond BACI designs, four fully orthogonal ANOVAs need to be done: on all
-the data, on "control" data, on "before" data, and on "control" and "before" data.
+In beyond BACI designs, four fully orthogonal ANOVAs are required: one on all the data,
+one on 'control' data, one on 'before' data, and one on 'control' and 'before' data.
 
-The \code{asym.baci} analysis fits mixed ANOVA designs with a specific
+The \code{asy.baci} analysis fits mixed asymmetrical ANOVA designs with a specific
 combination of orthogonal/nested and fixed/random factors:
-The  beyond BACI design runs for five-factors (3 temporal and 2 spatial),
-four-factors (3 temporal and 1 spatial or 2 temporal and 2 spatial), and
-three-factors (2 temporal and 1 spatial).
+The  beyond BACI design can be used with five factors (3 temporal and 2 spatial),
+four factors (3 temporal and 1 spatial or 2 temporal and 2 spatial), and
+three factors (2 temporal and 1 spatial).
 
-In all models the Location factor is the asymmetric one (e.g., one "impact"
-group and two or more "control" groups), meaning there are different numbers
-of levels of this nested factor within each different level of its upper-level
-factor (e.g., Before vs After, Period, Time or Place factors).
+In all models, the Location factor is asymmetric (e.g., one 'impact' group and
+two or more 'control' groups), meaning there are different numbers of levels of this
+nested factor at each  level of its upper-level factor (e.g., Place factor) or
+contrasting factors (e.g., Before-After, Period, Time).
 
 In all models the temporal and spatial factors are orthogonal.
 Within each factor type (temporal or spatial) the factors are hierarchically nested.
-In the beyond BACI models, the first factor and the Location factor are
-fixed and all others are random.
+In the beyond BACI and post-impact design with only one disturbed location models,
+the first factor and the Location factor are fixed, while all others are random.
 
 The data frame must follow a specific structure:
-1- first the temporal factors, then the spatial factors;
-2- each factor typemust appear in a hierarchical order.
+1- first the temporal factors, then the spatial factors, and then the variable(s);
+2- each factor type must appear in a hierarchical order.
 
-For beyond BACI design the order for temporal factors is Before_after, Period and Time (3 factors)
-or Before_after and Time (2 factors).
-The order for spatial factors is Location and Site (2 factors)
-or just Location (1 factor).
+For beyond BACI design the order of the temporal factors is Before-after, Period
+and Time (3 factors) or Before_after and Time (2 factors).
+For spatial factors, the order is Location and Site (2 factors) or just Location (1 factor).
 
-If the names of the factors are different from the above names they will be changed.
+If the names of the factors do not match those listed above, \code{AAV} will change them.
 
-In the case of a pooling structure, both the \code{eliminate} and \code{pool} methods
+When the data frame contains more than one variable, separate univariate ANOVAs are run for each one.
+
+In the case of a pooling structure, both the \code{pool} and \code{eliminate} methods
 are available for the beyond BACI design.
-For \code{eliminate}, the degree of freedom (df) and sum of square (SS) for a
-term is added to the residual df and SS and the term is treated as ever
-having been part of the model. When \code{pool}, the df and SS for that term is
+For \code{pool}, the degrees of freedom (Df) and sums of squares (SS) for that term are
 pooled with the term(s) that have an equivalent mean square expectation
 after the component of variation of that term has been set to zero. This
 component of variation is set to zero if it is >= \code{p.pooling} value.
+When \code{eliminate}, the Df and SS for a term is added to the residual
+Df and SS and the term is treated as ever having been part of the model.
 
-\code{asym.baci} "final table" is a typical ANOVA table ("Source.of.Variation","Df",
-"Sum.Sq","Mean.Sq","F.value","P.Value.Upper.Tail") with the partitioning of the
-variance components between "control" and "impacts" groups and between
-"before" and "after" disturbance groups.
-The final ANOVA table has three additional step-by-step elements:
-"P.Value.Lower.Tail" when their is a valid test for a two-tailed analysis;
-a "Next.Step" that indicates where to go from here, according to the
-calculation of the mean square estimates for that term,
-and an "Interpretation" that states the results found.
-
-The "complete table" presents all elements used in the asymmetrical analysis,
-with the "final table" elements plus:
-The complement for a two-tailed analysis ("P.Value.Lower.Tail");
-the degree of freedom formula ("Df.Formula");
-from which symmetrical ANOVA derived the SS and Df values ("Calculated.From");
-who is the denominator to the calculus of the F-ratio for that term ("Denominator");
-the Df, SS and MS for the pooled term(s) ("Df.Pooled","Sum.Sq.Pooled","Mean.Sq.Pooled");
-based on the \code{p.aav} and \code{p.pooling} values, a statement if that term is significant,
-non-significant or can be eliminated ("Significant");
-based on the \code{p.pooling} value and the mean square estimates, a statement on
-which of the possible pooled term were used ("Post.Hoc.Pooling").
+The magnitude of interactions in time and space can be analysed using a two-tailed tests.
+For beyond BACI design the two-tailed tests are automatically performed to contrast
+the differences in the space and time interactions from before to after the disturbance occurs.
+This is crucial for establishing a cause-and-effect relationship in ecological impact detection.
 }
 \examples{
 # Example for BACI design containing 3 temporal factors and 2 spatial factor:
-library(AAV)
 data(baci.3t2s) # 5-factors and one variable dataset
 data(symANOVA_baci.3t2s) # symmetrical ANOVAS from baci.3t2s data
 ex.asym.baci.3t2s<-asym.baci(data = baci.3t2s, n.ftemp = 3, n.fspac = 2,

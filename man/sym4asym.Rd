@@ -5,93 +5,97 @@
 \title{Symmetrical ANOVAs to Run an Asymmetrical ANOVA}
 \usage{
 sym4asym(data, aav.design, n.ftemp, n.fspac, names.impact,
-  names.before = NULL, aav.file = NULL)
+  names.before = NULL)
 }
 \arguments{
 \item{data}{a data frame with temporal factors, spatial factors and variable(s).}
 
-\item{aav.design}{\code{baci} for before/after-control/impact design or \code{aci} for post-impact design.}
+\item{aav.design}{\code{baci} for beyond Before/After-Control/Impact design or \code{aci} for Post-Impact design.}
 
 \item{n.ftemp}{number of temporal factors.}
 
 \item{n.fspac}{number of spatial factors.}
 
-\item{names.impact}{name of the asymmetrical level of the Control/Impact factor (e.g. "impact").}
+\item{names.impact}{name of the asymmetrical level of the Location factor (e.g. 'impact').}
 
-\item{names.before}{only for \code{baci} design. Name of the before level of the Before/After factor (e.g. "before").}
-
-\item{aav.file}{A file path to save the AAV output files. Default \code{NULL} uses current name and working directory.}
+\item{names.before}{only for \code{baci} design. Name of the before level of the Before/After factor (e.g. 'before').}
 }
 \value{
-\code{Excel} files containing the symmetrical ANOVA tables used to
-run the asymmetrical ANOVAs.
-When analyzing more than one variable at once, each sheet have one ANOVA table.
+The function returns a list containing the following items:
+\item{full_design}{symmetrical ANOVA tables from all the dataset; all factors are orthogonal.}
+\item{control_design}{symmetrical ANOVA tables just from the 'control' dataset; all factors are orthogonal.}
+\item{before_design}{only for \code{baci} design; symmetrical ANOVA tables just from the 'before' dataset; all factors are orthogonal.}
+\item{control_before_design}{only for \code{baci} design; symmetrical ANOVA tables just from the "control" and 'before' dataset; all factors are orthogonal.}
+\item{nested_control_design}{only for \code{aci} design involving more than one place
+with one disturbed location; symmetrical ANOVA tables just from the 'control' dataset;
+all factors are nested.}
+
+When analysing more than one variable at once, the results for each variable
+appear in the sublists.
 }
 \description{
-Calculate the symmetrical ANOVAs to run an asymmetrical ANOVA
+Provides the symmetrical ANOVAs to run an asymmetrical ANOVA
 beyond BACI or post-impact design.
 
 Asymmetrical ANOVAs are essentially multi-factorial.
-Beyond BACI design can be used for models with 2 or 3 temporal factors
-and 1 or 2 spatial factors. Post-impact design with only one disturbed location
-and multiple control locations can be used for models with 1 or 2 temporal factors
-and 1 or 2 spatial factors. Post-impact design with more than one place with
-one disturbed location and multiple control locations can be used for models
+The beyond BACI design can be used for models with 2 or 3 temporal factors
+and 1 or 2 spatial factors. A post-impact design with only one disturbed location
+can be used for models with 1 or 2 temporal factors
+and 1 or 2 spatial factors. A post-impact design with more than one place with
+one disturbed location can be used for models
 with 2 or 3 spatial factors.
 }
 \details{
-The construction of asymmetrical analyses of variance consists of combining
+Asymmetrical analyses of variance are constructed by combining
 the Sum of Squares values from separate (symmetrical) ANOVAs.
-In beyond BACI designs, four fully orthogonal ANOVAs need to be done: on all
-the data, on "control" data, on "before" data, and on "control" and "before" data.
+In beyond BACI designs, four fully orthogonal ANOVAs are required: one on all the data,
+one on 'control' data, one on 'before' data, and one on 'control' and 'before' data.
 In post-impact designs with only one disturbed location two fully orthogonal
-ANOVAs need to be done: on all the data and on "control" data.
-In post-impact designs with more than one place with one disturbed location
-two fully orthogonal and one fully nested ANOVAs need to be done:
-on all data (orthogonal) and on "control" data (orthogonal and nested).
-\code{sym4asy} use \code{\link[GAD]{GAD}} (Sandrini-Neto et al. 2024) to perform symmetrical ANOVAs.
+ANOVAs are performed: one on all the data, and one on the 'control' data.
+In post-impact designs involving more than one place with one disturbed location,
+two fully orthogonal and one fully nested ANOVA need to be performed: one on all the data
+(orthogonal) and two on the 'control' data (orthogonal and nested).
+\code{aav} uses \code{\link[GAD]{GAD}} (Sandrini-Neto et al. 2024) to perform symmetrical ANOVAs.
 
 The \code{sym4asym} analysis fits mixed ANOVA designs with a specific
 combination of orthogonal/nested and fixed/random factors:
-The  beyond BACI design runs for five-factors (3 temporal and 2 spatial),
-four-factors (3 temporal and 1 spatial or 2 temporal and 2 spatial), and
-three-factors (2 temporal and 1 spatial).
+The  beyond BACI design can be used with five factors (3 temporal and 2 spatial),
+four factors (3 temporal and 1 spatial or 2 temporal and 2 spatial), and
+three factors (2 temporal and 1 spatial).
 The post-impact design with only one disturbed location runs for
-four-factors (2 temporal and 2 spatial), three-factors (2 temporal and 1 spatial or
-1 temporal and 2 spatial), and two-factors (1 temporal and 1 spatial).
-The post-impact design with more than one place with one disturbed location runs for
-three-factors (0 temporal and 3 spatial) and two-factors (0 temporal and 2 spatial).
+four factors (2 temporal and 2 spatial), three factors (2 temporal and 1 spatial or
+1 temporal and 2 spatial), and two factors (1 temporal and 1 spatial).
+The post-impact design involving more than one place with one disturbed location runs for
+three factors (0 temporal and 3 spatial) and two factors (0 temporal and 2 spatial).
 
-In all models the Location factor is the asymmetric one (e.g., one "impact"
-group and two or more "control" groups), meaning there are different numbers
-of levels of this nested factor within each different level of its upper-level
-factor (e.g., Before vs After, Period, Time or Place factors).
+In all models, the Location factor is asymmetric (e.g., one 'impact' group and
+two or more 'control' groups), meaning there are different numbers of levels of this
+nested factor at each  level of its upper-level factor (e.g., Place factor) or
+contrasting factors (e.g., Before-After, Period, Time).
 
 In all models the temporal and spatial factors are orthogonal.
 Within each factor type (temporal or spatial) the factors are hierarchically nested.
 In the beyond BACI and post-impact design with only one disturbed location models,
-the first factor and the Location factor are fixed and all others are random.
-In the post-impact design with more than one place with one disturbed location,
-the first factor is fixed and all other factors are random.
+the first factor and the Location factor are fixed, while all others are random.
+In the post-impact design involving than one place with one disturbed location,
+the first factor is fixed and the others are random.
 
 The data frame must follow a specific structure:
 1- first the temporal factors, then the spatial factors, and then the variable(s);
 2- each factor type must appear in a hierarchical order.
 
-For beyond BACI design the order for temporal factors is Before_after, Period and Time (3 factors)
-or Before_after and Time (2 factors).
-The order for spatial factors is Location and Site (2 factors)
-or just Location (1 factor).
-For post-impact design with only one disturbed location and multiple control locations,
-the order for temporal factors must be Period and Time (2 factors) or just Time (1 factor), and
-the order for spatial factors must be Location and Site (2 factors) or just Location (1 factor).
-For post-impact design with more than one place with one disturbed location and multiple control locations,
-the order for spatial factors must be Place, Location and Site (3 factors) or Place and Location (2 factors).
+For beyond BACI design the order of the temporal factors is Before-after, Period
+and Time (3 factors) or Before_after and Time (2 factors).
+For spatial factors, the order is Location and Site (2 factors) or just Location (1 factor).
+In a post-impact design involving only one disturbed location and multiple control locations,
+the temporal factor order must be either Period and Time (2 factors) or just Time (1 factor), and
+the spatial factor order must be either Location and Site (2 factors) or just Location (1 factor).
+In a post-impact design involving more than one place with one disturbed location and multiple control locations,
+the order of the spatial factors must be Place, Location and Site (3 factors) or Place and Location (2 factors).
 
-If the names of the factors are different from the above names they will be changed.
+If the names of the factors do not match those listed above, \code{AAV} will change them.
 
-When the data frame have more than one variable the univariate ANOVAs are run
-for each one separated.
+When the data frame contains more than one variable, separate univariate ANOVAs are run for each one.
 }
 \examples{
 # Example for BACI design containing 3 temporal factors and 2 spatial factor:

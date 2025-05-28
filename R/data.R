@@ -6,7 +6,7 @@
 #'     2 spatial (Location, Site) factors and 3 response variables simulating
 #'     no impact, press disturbance and pulse disturbance.
 #'
-#' @format A dataframe with 288 rows and 8 collumns.
+#' @format A dataframe with 288 rows and 8 columns.
 #'
 #' @details
 #' * Before-after: a fixed factor with two levels (before, after).
@@ -35,7 +35,7 @@
 #'     2 spatial (Location, Site) factors and 3 response variables simulating
 #'     no impact, press disturbance and pulse disturbance.
 #'
-#' @format A dataframe with 288 rows and 7 collumns.
+#' @format A dataframe with 288 rows and 7 columns.
 #'
 #' @details
 #' * Period: a fixed factor with two levels (p1, p2).
@@ -64,7 +64,7 @@
 #'     and 3 response variables simulating no impact, press disturbance
 #'     and pulse disturbance.
 #'
-#' @format A dataframe with 288 rows and 6 collumns.
+#' @format A dataframe with 288 rows and 6 columns.
 #'
 #' @details
 #' * Place: a fixed factor with two levels (pl1, pl2).

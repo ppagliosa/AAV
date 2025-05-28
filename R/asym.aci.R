@@ -1,20 +1,20 @@
 #' @title Asymmetrical ANOVA From Post-Impact Design
 #'
 #' @description
-#' Calculate an asymmetrical ANOVA from post-impact design with only one
+#' Provides an asymmetrical ANOVA from post-impact design with only one
 #' disturbed location and multiple control locations or
-#' a post-impact design with more than one place with one
+#' a post-impact design involving more than one place with one
 #' disturbed location and multiple control.
 #'
 #' Post-impact design with only one disturbed location can be used for models
 #' with 1 or 2 temporal factors and 1 or 2 spatial factors.
-#' Post-impact design with more than one place with one disturbed location
+#' Post-impact design involving more than one place with one disturbed location
 #' can be used for models with 2 or 3 spatial factors.
 #'
-#' @param data a data frame with temporal factors and spatial factors.
+#' @param data a data frame with temporal factors, spatial factors and variable(s).
 #' @param n.ftemp number of temporal factors.
 #' @param n.fspac number of spatial factors.
-#' @param names.impact name of the asymmetrical level of the Control/Impact factor (e.g. "impact").
+#' @param names.impact name of the asymmetrical level of the Location factor (e.g. 'impact').
 #' @param sym.F an object containing the results returned by \code{sym4asym} function or
 #'     an symmetrical analysis of variance table run with all the data,
 #'     meaning the asymmetry is deal as a factor level (e.g., Control_1,
@@ -23,86 +23,112 @@
 #'     an symmetrical analysis of variance table run omitting the asymmetrical data
 #'     (e.g., only the Control_1 and Control_2 are the factor levels).
 #' @param sym.NC only for a design with more than one place with one disturbed location.
-#'     an object containing the results returned by \code{sym4asym} function or
+#'     An object containing the results returned by \code{sym4asym} function or
 #'     an symmetrical analysis of variance table run omitting the asymmetrical data
 #'     and with all factors nested (e.g., Control location nested in Place).
 #' @param p.aav level of significance for the asymmetrical ANOVA. Default is \code{0.05}.
-#' @param pooling remove a term from the analyse using a post-hoc pooling procedure. Default is \code{TRUE}.
+#' @param pooling remove a term from the analysis using a post-hoc pooling procedure. Default is \code{TRUE}.
 #' @param p.pooling only when \code{pooling = TRUE}.
 #'     Level of significance for the pooling procedure. Default is \code{0.25}.
-#' @param aci.tailed.test Perform a 1-tailed or a 2-tailed test for all terms. Default is \code{1}.
+#' @param aci.tailed.test only for post-impact design with only one disturbed location
+#'     and multiple control locations. Perform a 1-tailed or a 2-tailed test for all terms.
+#'     Default is \code{1}.
 #'
 #' @details
-#' The construction of asymmetrical analyses of variance consists of combining
+#' Asymmetrical analyses of variance are constructed by combining
 #' the Sum of Squares values from separate (symmetrical) ANOVAs.
 #' In post-impact designs with only one disturbed location two fully orthogonal
-#' ANOVAs need to be done: on all the data and on "control" data.
-#' In post-impact designs with more than one place with one disturbed location
-#' two fully orthogonal and one fully nested ANOVAs need to be done:
-#' on all data (orthogonal) and on "control" data (orthogonal and nested).
+#' ANOVAs are performed: one on all the data, and one on the 'control' data.
+#' In post-impact designs involving more than one place with one disturbed location,
+#' two fully orthogonal and one fully nested ANOVA need to be performed: one on all the data
+#' (orthogonal) and two on the 'control' data (orthogonal and nested).
+#' \code{aav} uses \code{\link[GAD]{GAD}} (Sandrini-Neto et al. 2024) to perform symmetrical ANOVAs.
 #'
-#' The \code{asym.aci} analysis fits mixed ANOVA designs with a specific
+#' The \code{asym.aci} analysis fits mixed asymmetrical ANOVA designs with a specific
 #' combination of orthogonal/nested and fixed/random factors:
 #' The post-impact design with only one disturbed location runs for
-#' four-factors (2 temporal and 2 spatial), three-factors (2 temporal and 1 spatial or
-#' 1 temporal and 2 spatial), and two-factors (1 temporal and 1 spatial).
-#' The post-impact design with more than one place with one disturbed location runs for
-#' three-factors (0 temporal and 3 spatial) and two-factors (0 temporal and 2 spatial).
+#' four factors (2 temporal and 2 spatial), three factors (2 temporal and 1 spatial or
+#' 1 temporal and 2 spatial), and two factors (1 temporal and 1 spatial).
+#' The post-impact design involving more than one place with one disturbed location runs for
+#' three factors (0 temporal and 3 spatial) and two factors (0 temporal and 2 spatial).
 #'
-#' In all models the Location factor is the asymmetric one (e.g., one "impact"
-#' group and two or more "control" groups), meaning there are different numbers
-#' of levels of this nested factor within each different level of its upper-level
-#' factor (e.g., Period, Time or Place factors).
+#' In all models, the Location factor is asymmetric (e.g., one 'impact' group and
+#' two or more 'control' groups), meaning there are different numbers of levels of this
+#' nested factor at each  level of its upper-level factor (e.g., Place factor) or
+#' contrasting factors (e.g., Before-After, Period, Time).
 #'
 #' In all models the temporal and spatial factors are orthogonal.
 #' Within each factor type (temporal or spatial) the factors are hierarchically nested.
 #' In the post-impact design with only one disturbed location models,
 #' the first factor and the Location factor are fixed and all others are random.
-#' In the post-impact design with more than one place with one disturbed location,
-#' the first factor is fixed and all other factors are random.
+#' In the post-impact design involving than one place with one disturbed location,
+#' the first factor is fixed and the others are random.
 #'
 #' The data frame must follow a specific structure:
-#' 1- first the temporal factors, then the spatial factors;
+#' 1- first the temporal factors, then the spatial factors, and then the variable(s);
 #' 2- each factor type must appear in a hierarchical order.
 #'
-#' For post-impact design with only one disturbed location and multiple control locations,
-#' the order for temporal factors must be Period and Time (2 factors) or just Time (1 factor), and
-#' the order for spatial factors must be Location and Site (2 factors) or just Location (1 factor).
-#' For post-impact design with more than one place with one disturbed location and multiple control locations,
-#' the order for spatial factors must be Place, Location and Site (3 factors) or Place and Location (2 factors).
+#' In a post-impact design involving only one disturbed location and multiple control locations,
+#' the temporal factor order must be either Period and Time (2 factors) or just Time (1 factor), and
+#' the spatial factor order must be either Location and Site (2 factors) or just Location (1 factor).
+#' In a post-impact design involving more than one place with one disturbed location and multiple control locations,
+#' the order of the spatial factors must be Place, Location and Site (3 factors) or Place and Location (2 factors).
 #'
-#' If the names of the factors are different from the above names they will be changed.
+#' If the names of the factors do not match those listed above, \code{AAV} will change them.
 #'
-#' In the case of a pooling structure, when \code{pooling} is set to \code{TRUE},
+#' When the data frame contains more than one variable, separate univariate ANOVAs are run for each one.
+#'
+#' In the case of a pooling structure, both the \code{pool} and \code{eliminate} methods
+#' are available for the beyond BACI design. For post-impact design when
+#' \code{pooling} is \code{TRUE} the analysis is running using the method \code{pool}.
+#'
+#' In the case of a pooling structure, when \code{pooling = TRUE},
 #' the analysis runs using the \code{pool} method, where the
-#' degrees of freedom (df) and sums of squares (SS) for a given term are
+#' degrees of freedom (Df) and sums of squares (SS) for that term are
 #' pooled with the term(s) that have an equivalent mean square expectation
 #' after the component of variation of that term has been set to zero. This
 #' component of variation is set to zero if it is >= \code{p.pooling} value.
 #'
-#' \code{asym.aci} "final table" is a typical ANOVA table ("Source.of.Variation","Df",
-#' "Sum.Sq","Mean.Sq","F.value","P.Value.Upper.Tail","P.Value.Lower.Tail") with the
-#' partitioning of the variance components between "control" and "impacts" groups.
-#' The final ANOVA table has two additional step-by-step elements:
-#' a "Next.Step" that indicates where to go from here, according to the
-#' calculation of the mean square estimates for that term,
-#' and an "Interpretation" that states the results found.
-#' There is no "P.Value.Lower.Tail" for the a post-impact design with more than
-#' one place with one disturbed location.
-#'
-#' The "complete table" presents all elements used in the asymmetrical analysis,
-#' with the "final table" elements plus:
-#' the degree of freedom formula ("Df.Formula");
-#' from which symmetrical ANOVA derived the SS and Df values ("Calculated.From");
-#' who is the denominator to the calculus of the F-ratio for that term ("Denominator");
-#' the Df, SS and MS for the pooled term(s) ("Df.Pooled","Sum.Sq.Pooled","Mean.Sq.Pooled");
-#' based on the \code{p.aav} and \code{p.pooling} values, a statement if that term is significant,
-#' non-significant or can be eliminated ("Significant");
-#' based on the \code{p.pooling} value and the mean square estimates, a statement on
-#' which of the possible pooled term were used ("Post.Hoc.Pooling").
+#' The magnitude of interactions in time and space can be analysed using a two-tailed tests.
+#' for Post-Impact design involving only one impact location,
+#' where temporal interactions among locations occur just after the disturbance,
+#' a two-tailed test can be performed (by selecting \code{aci.tailed.test = 2}) to determine
+#' whether and in which direction the time trends differ between impact and controls locations.
+#' For a Post-Impact design involving more than one place with one disturbed location,
+#' there is no need for a two-tailed test. In this design, F-tests contrast treatments
+#' against an interaction term of spatial scale and treatments and are properly run as one-tailed tests.
 #'
 #' @returns
-#' A \code{data frame} containing an asymmetrical ANOVA table.
+#' The function returns a list containing the following items:
+#' \item{sym.anova}{the symmetrical ANOVA tables used for running asymmetrical ANOVAs.}
+#' \item{asym.anova_final}{the final asymmetrical ANOVA tables.
+#' The 'final table' is a typical ANOVA table
+#' ('Source.of.Variation','Df', 'Sum.Sq','Mean.Sq','F.value','P.Value.Upper.Tail','P.Value.Lower.Tail')
+#' with the partitioning of the variance components between control and impacts
+#' groups and between before and after disturbance groups (only for BACI designs).
+#' The 'final table' has two additional step-by-step elements:
+#' a 'Next.Step' that indicates where to go from here, according to the
+#' calculation of the mean square estimates for that term,
+#' and an 'Interpretation' that states the results found.
+#' There is no 'P.Value.Lower.Tail' for the a post-impact design with more than
+#' one place with one disturbed location. For beyond BACI design 'P.Value.Lower.Tail'
+#' appears only when there is a valid test for a two-tailed analysis.}
+#' \item{asym.anova_complete}{the complete asymmetrical ANOVA tables.
+#' The 'complete table' presents all elements used in the asymmetrical analysis,
+#' with the 'final table' elements plus:
+#' The complement for a two-tailed analysis ('P.Value.Lower.Tail');
+#' the degrees of freedom formula ('Df.Formula');
+#' from which symmetrical ANOVA derived the SS and Df values ('Calculated.From');
+#' who is the denominator to the calculus of the F-ratio for that term ('Denominator');
+#' the Df, SS and MS for the pooled term(s) ('Df.Pooled','Sum.Sq.Pooled','Mean.Sq.Pooled');
+#' based on the \code{p.aav} and \code{p.pooling} values, a statement if that term is significant,
+#' non-significant or can be eliminated ('Significant');
+#' based on the \code{p.pooling} value and the mean square estimates, a statement on
+#' which of the possible pooled term were used ('Post.Hoc.Pooling');
+#' some designs has two-tailed analysis ('P.Value.Lower.Tail').}
+#'
+#' When analysing more than one variable at once, the results for each variable
+#' appear in the sublists.
 #'
 #' @author Paulo Pagliosa \email{paulo.pagliosa@ufsc.br}
 #'
@@ -126,7 +152,6 @@
 #' @examples
 #' # Example for post-impact design with only one disturbed location
 #' # containing 2 temporal factors and 2 spatial factor:
-#' #library(AAV)
 #' data(aci.2t2s) # 4-factors dataset
 #' data(symANOVA_aci.2t2s) # symmetrical ANOVAS from aci.2t2s data
 #' ex.symANOVA_aci.2t2s<-asym.aci(data = aci.2t2s, n.ftemp = 2, n.fspac = 2,
@@ -138,7 +163,6 @@
 #'
 #' # Example for post-impact design with more than one place with one
 #' # disturbed location containing 0 temporal factors and 3 spatial factor:
-#' #library(AAV)
 #' data(aci.0t3s) # 3-factors dataset
 #' data(symANOVA_aci.0t3s) # symmetrical ANOVAS from aci.0t3s data
 #' ex.symANOVA_aci.0t3s<-asym.aci(data = aci.0t3s, n.ftemp = 0, n.fspac = 3,
@@ -149,10 +173,7 @@
 #'     p.aav = 0.05, pooling = TRUE, p.pooling = 0.25)
 #' ex.symANOVA_aci.0t3s
 #'
-#' @import openxlsx
 #' @import dplyr
-#'
-#' @importFrom stats pf
 #'
 #' @include sym4asym.R
 #'
@@ -1810,7 +1831,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
   ###----------------------------------------- #################################
 
   aci<-rbind(f.an,c.an,i.an)
-  aci<-arrange(aci,ID)
+  aci<-dplyr::arrange(aci,ID)
 
 
   ###----------------------------------------------------------- TWO-TAILED test

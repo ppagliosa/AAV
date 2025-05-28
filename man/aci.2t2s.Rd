@@ -6,7 +6,7 @@
 \title{Dataset For testing a Post-Impact Design
 With Only One Disturbed Location and Multiple Control Locations}
 \format{
-A dataframe with 288 rows and 7 collumns.
+A dataframe with 288 rows and 7 columns.
 }
 \source{
 Created in-house to serve as an example.

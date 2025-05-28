@@ -6,13 +6,13 @@
 \alias{AAV-package}
 \title{AAV: Asymmetrical Analysis of Variance to Detect Ecological Impacts}
 \description{
-Provides analyses for asymmetrical ANOVA models from beyond BACI (before/after-control/impact) design with multiple control locations, post-impact design with only one disturbed location and multiple control locations, or post-impact design with more than one place with one disturbed location and multiple control locations. For more details see Underwood (1993) \doi{10.1111/j.1442-9993.1993.tb00437.x} and Glasby (1997) \doi{10.1111/j.1442-9993.1997.tb00696.x}.
+Provides analyses for asymmetrical ANOVA models from Beyond BACI (before/after-control/impact) design with multiple control locations, Post-Impact design with only one disturbed location and multiple control locations, or Post-Impact design with more than one place with one disturbed location and multiple control locations. For more details see Underwood (1993) \doi{10.1111/j.1442-9993.1993.tb00437.x} and Glasby (1997) \doi{10.1111/j.1442-9993.1997.tb00696.x}.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{}
-  \item Report bugs at \url{}
+  \item \url{https://github.com/ppagliosa/AAV}
+  \item Report bugs at \url{https://github.com/ppagliosa/AAV/issues}
 }
 
 }

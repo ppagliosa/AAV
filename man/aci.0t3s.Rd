@@ -7,7 +7,7 @@
 With More Than One Place With One Disturbed Location and Multiple
 Control Locations}
 \format{
-A dataframe with 288 rows and 6 collumns.
+A dataframe with 288 rows and 6 columns.
 }
 \source{
 Created in-house to serve as an example.
