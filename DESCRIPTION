@@ -6,7 +6,7 @@ Date: 2025-05-20
 Author: person(given = "Paulo", family = "Pagliosa", role = c("aut",
     "cre"), email = "paulo.pagliosa@ufsc.br", comment = c(ORCID =
     "0000-0003-0834-2534"))
-Maintainer: Paulo Pagliosa <paulo.pagliosaf@ufsc.br>
+Maintainer: Paulo Pagliosa <paulo.pagliosa@ufsc.br>
 Description: Provides analyses for asymmetrical ANOVA models from Beyond
     BACI (before/after-control/impact) design with multiple control
     locations, Post-Impact design with only one disturbed location and
