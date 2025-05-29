@@ -34,4 +34,9 @@ and pulse disturbance.
  data(aci.0t3s)
  aci.0t3s
 }
+\seealso{
+\code{\link[AAV]{aav}},
+\code{\link[AAV]{sym4asym}},
+\code{\link[AAV]{symANOVA_aci.0t3s}}
+}
 \keyword{datasets}

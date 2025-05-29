@@ -20,6 +20,11 @@
 #'
 #' @source Created in-house to serve as an example.
 #'
+#' @seealso
+#' \code{\link[AAV]{aav}},
+#' \code{\link[AAV]{sym4asym}},
+#' \code{\link[AAV]{symANOVA_aci.3t2s}},
+#'
 #' @examples
 #'  data(baci.3t2s)
 #'  baci.3t2s
@@ -48,6 +53,11 @@
 #'
 #' @source Created in-house to serve as an example.
 #'
+#' @seealso
+#' \code{\link[AAV]{aav}},
+#' \code{\link[AAV]{sym4asym}},
+#' \code{\link[AAV]{symANOVA_aci.2t2s}},
+#'
 #' @examples
 #'  data(aci.2t2s)
 #'  aci.2t2s
@@ -75,6 +85,11 @@
 #' * Var.S.impact: response variable; pulse impact - a reduction in numbers at one site of the impact location is simulated.
 #'
 #' @source Created in-house to serve as an example.
+#'
+#' @seealso
+#' \code{\link[AAV]{aav}},
+#' \code{\link[AAV]{sym4asym}},
+#' \code{\link[AAV]{symANOVA_aci.0t3s}}
 #'
 #' @examples
 #'  data(aci.0t3s)
@@ -108,6 +123,11 @@
 #'
 #' @source Created in-house to serve as an example.
 #'
+#' @seealso
+#' \code{\link[AAV]{aav}},
+#' \code{\link[AAV]{asym.baci}},
+#' \code{\link[AAV]{baci.3t2s}}
+#'
 #' @examples
 #'  data(symANOVA_baci.3t2s)
 #'  symANOVA_baci.3t2s
@@ -138,6 +158,11 @@
 #'
 #' @source Created in-house to serve as an example.
 #'
+#' @seealso
+#' \code{\link[AAV]{aav}},
+#' \code{\link[AAV]{asym.aci}},
+#' \code{\link[AAV]{aci.2t2s}}
+#'
 #' @examples
 #'  data(symANOVA_aci.2t2s)
 #'  symANOVA_aci.2t2s
@@ -167,6 +192,11 @@
 #' * Pr(>F): P-value.
 #'
 #' @source Created in-house to serve as an example.
+#'
+#' @seealso
+#' \code{\link[AAV]{aav}},
+#' \code{\link[AAV]{asym.aci}},
+#' \code{\link[AAV]{aci.0t3s}}
 #'
 #' @examples
 #'  data(symANOVA_aci.0t3s)

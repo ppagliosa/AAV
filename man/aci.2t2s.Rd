@@ -34,4 +34,9 @@ no impact, press disturbance and pulse disturbance.
  data(aci.2t2s)
  aci.2t2s
 }
+\seealso{
+\code{\link[AAV]{aav}},
+\code{\link[AAV]{sym4asym}},
+\code{\link[AAV]{symANOVA_aci.2t2s}},
+}
 \keyword{datasets}

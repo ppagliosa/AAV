@@ -38,4 +38,9 @@ Each table is provided with:
  data(symANOVA_baci.3t2s)
  symANOVA_baci.3t2s
 }
+\seealso{
+\code{\link[AAV]{aav}},
+\code{\link[AAV]{asym.baci}},
+\code{\link[AAV]{baci.3t2s}}
+}
 \keyword{datasets}

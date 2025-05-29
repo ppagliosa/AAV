@@ -36,4 +36,9 @@ Each table is provided with:
  data(symANOVA_aci.2t2s)
  symANOVA_aci.2t2s
 }
+\seealso{
+\code{\link[AAV]{aav}},
+\code{\link[AAV]{asym.aci}},
+\code{\link[AAV]{aci.2t2s}}
+}
 \keyword{datasets}
