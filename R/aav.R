@@ -290,7 +290,7 @@ aav<- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.before = 
   aav.list[[2]]<-asym.anova_final
   names(aav.list)[[2]]<-"asym.anova_final"
   aav.list[[3]]<-asym.anova_complete
-  names(aav.list)[[2]]<-"asym.anova_complete"
+  names(aav.list)[[3]]<-"asym.anova_complete"
 
   return(aav.list)
 }
