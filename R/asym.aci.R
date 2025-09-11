@@ -1436,7 +1436,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "06DEG.0030"]<-"(p-1)(s-1)"
     i.an$Calculated.From[i.an$ID == "06DEG.0030"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "06DEG.0030"] <- i.an$Sum.Sq[i.an$ID == "06DEG.0030"] / i.an$Df[i.an$ID == "06DEG.0030"]
-    i.an$Source.of.Variation[i.an$ID == "06DEG.0030"]<-"P x S(I)"
+    i.an$Source.of.Variation[i.an$ID == "06DEG.0030"]<-"P x S(T)"
     i.an$Denominator[i.an$ID == "06DEG.0030"]<-"S(C(P))"
     i.an$F.Value[i.an$ID == "06DEG.0030"]<-i.an$Mean.Sq[i.an$ID == "06DEG.0030"] / c.an$Mean.Sq[c.an$ID == "08DEGn.0040"]
     i.an$P.Value.Upper.Tail[i.an$ID == "06DEG.0030"]<- stats::pf(i.an$F.Value[i.an$ID == "06DEG.0030"], i.an$Df[i.an$ID == "06DEG.0030"], c.an$Df[c.an$ID == "08DEGn.0040"], lower.tail = F)
@@ -1450,8 +1450,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "05EG.0030"]<-"(s-1)"
     i.an$Calculated.From[i.an$ID == "05EG.0030"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "05EG.0030"]<-i.an$Sum.Sq[i.an$ID == "05EG.0030"] / i.an$Df[i.an$ID == "05EG.0030"]
-    i.an$Source.of.Variation[i.an$ID == "05EG.0030"]<-"Sites(I) = S(I)"
-    i.an$Denominator[i.an$ID == "05EG.0030"]<-"PxS(I)"
+    i.an$Source.of.Variation[i.an$ID == "05EG.0030"]<-"Sites(T) = S(T)"
+    i.an$Denominator[i.an$ID == "05EG.0030"]<-"PxS(T)"
     i.an$F.Value[i.an$ID == "05EG.0030"]<-i.an$Mean.Sq[i.an$ID == "05EG.0030"] / i.an$Mean.Sq[i.an$ID == "06DEG.0030"]
     i.an$P.Value.Upper.Tail[i.an$ID == "05EG.0030"]<- stats::pf(i.an$F.Value[i.an$ID == "05EG.0030"], i.an$Df[i.an$ID == "05EG.0030"], i.an$Df[i.an$ID == "06DEG.0030"], lower.tail = F)
     #      i.an$P.Value.Lower.Tail[i.an$ID == "05EG.0030"]<- stats::pf(i.an$F.Value[i.an$ID == "05EG.0030"], i.an$Df[i.an$ID == "05EG.0030"], i.an$Df[i.an$ID == "06DEG.0030"], lower.tail = T)
@@ -1464,7 +1464,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "03DE.0030"]<-"(p-1)(t-1)"
     i.an$Calculated.From[i.an$ID == "03DE.0030"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "03DE.0030"]<-i.an$Sum.Sq[i.an$ID == "03DE.0030"] / i.an$Df[i.an$ID == "03DE.0030"]
-    i.an$Source.of.Variation[i.an$ID == "03DE.0030"]<-"P x T = P x I"
+    i.an$Source.of.Variation[i.an$ID == "03DE.0030"]<-"P x T"
     i.an$Denominator[i.an$ID == "03DE.0030"]<-"C(P)"
     i.an$F.Value[i.an$ID == "03DE.0030"]<-i.an$Mean.Sq[i.an$ID == "03DE.0030"] / c.an$Mean.Sq[c.an$ID == "07DEn.0040"]
     i.an$P.Value.Upper.Tail[i.an$ID == "03DE.0030"]<- stats::pf(i.an$F.Value[i.an$ID == "03DE.0030"], i.an$Df[i.an$ID == "03DE.0030"], c.an$Df[c.an$ID == "07DEn.0040"], lower.tail = F)
@@ -1476,8 +1476,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "03DE.0031"]<-"(p-1)(t-1)"
     i.an$Calculated.From[i.an$ID == "03DE.0031"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "03DE.0031"]<-i.an$Sum.Sq[i.an$ID == "03DE.0031"] / i.an$Df[i.an$ID == "03DE.0031"]
-    i.an$Source.of.Variation[i.an$ID == "03DE.0031"]<-"P x T = P x I"
-    i.an$Denominator[i.an$ID == "03DE.0031"]<-"PxS(I)"
+    i.an$Source.of.Variation[i.an$ID == "03DE.0031"]<-"P x T"
+    i.an$Denominator[i.an$ID == "03DE.0031"]<-"PxS(T)"
     i.an$F.Value[i.an$ID == "03DE.0031"]<-i.an$Mean.Sq[i.an$ID == "03DE.0031"] / i.an$Mean.Sq[i.an$ID == "06DEG.0030"]
     i.an$P.Value.Upper.Tail[i.an$ID == "03DE.0031"]<- stats::pf(i.an$F.Value[i.an$ID == "03DE.0031"], i.an$Df[i.an$ID == "03DE.0031"], i.an$Df[i.an$ID == "06DEG.0030"], lower.tail = F)
     #      i.an$P.Value.Lower.Tail[i.an$ID == "03DE.0031"]<- stats::pf(i.an$F.Value[i.an$ID == "03DE.0031"], i.an$Df[i.an$ID == "03DE.0031"], i.an$Df[i.an$ID == "06DEG.0030"], lower.tail = T)
@@ -1488,8 +1488,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "03DE.0032"]<-"(p-1)(t-1)"
     i.an$Calculated.From[i.an$ID == "03DE.0032"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "03DE.0032"]<-i.an$Sum.Sq[i.an$ID == "03DE.0032"] / i.an$Df[i.an$ID == "03DE.0032"]
-    i.an$Source.of.Variation[i.an$ID == "03DE.0032"]<-"P x T = P x I"
-    i.an$Denominator[i.an$ID == "03DE.0032"]<-"C(P)+PxS(I)+S(C(P))"
+    i.an$Source.of.Variation[i.an$ID == "03DE.0032"]<-"P x T"
+    i.an$Denominator[i.an$ID == "03DE.0032"]<-"C(P)+PxS(T)+S(C(P))"
     i.an$Df.Pooled[i.an$ID == "03DE.0032"]<-c.an$Df[c.an$ID == "07DEn.0040"] + i.an$Df[i.an$ID == "06DEG.0030"] + c.an$Df[c.an$ID == "08DEGn.0040"]
     i.an$Sum.Sq.Pooled[i.an$ID == "03DE.0032"]<-c.an$Sum.Sq[c.an$ID == "07DEn.0040"] + i.an$Sum.Sq[i.an$ID == "06DEG.0030"] + c.an$Sum.Sq[c.an$ID == "08DEGn.0040"]
     i.an$Mean.Sq.Pooled[i.an$ID == "03DE.0032"] <- i.an$Sum.Sq.Pooled[i.an$ID == "03DE.0032"] / i.an$Df.Pooled[i.an$ID == "03DE.0032"]
@@ -1505,8 +1505,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "02E.0030"]<-"(t-1)"
     i.an$Calculated.From[i.an$ID == "02E.0030"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "02E.0030"]<-i.an$Sum.Sq[i.an$ID == "02E.0030"] / i.an$Df[i.an$ID == "02E.0030"]
-    i.an$Source.of.Variation[i.an$ID == "02E.0030"]<-"Treatment = T = Impact vs Controls = I"
-    i.an$Denominator[i.an$ID == "02E.0030"]<-"PxI"
+    i.an$Source.of.Variation[i.an$ID == "02E.0030"]<-"Treatment = T"
+    i.an$Denominator[i.an$ID == "02E.0030"]<-"PxT"
     i.an$F.Value[i.an$ID == "02E.0030"]<-i.an$Mean.Sq[i.an$ID == "02E.0030"] / i.an$Mean.Sq[i.an$ID == "03DE.0030"]
     i.an$P.Value.Upper.Tail[i.an$ID == "02E.0030"]<- stats::pf(i.an$F.Value[i.an$ID == "02E.0030"], i.an$Df[i.an$ID == "02E.0030"], i.an$Df[i.an$ID == "03DE.0030"], lower.tail = F)
     #      i.an$P.Value.Lower.Tail[i.an$ID == "02E.0030"]<- stats::pf(i.an$F.Value[i.an$ID == "02E.0030"], i.an$Df[i.an$ID == "02E.0030"], i.an$Df[i.an$ID == "03DE.0030"], lower.tail = T)
@@ -1517,8 +1517,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "02E.0031"]<-"(t-1)"
     i.an$Calculated.From[i.an$ID == "02E.0031"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "02E.0031"]<-i.an$Sum.Sq[i.an$ID == "02E.0031"] / i.an$Df[i.an$ID == "02E.0031"]
-    i.an$Source.of.Variation[i.an$ID == "02E.0031"]<-"Treatment = T = Impact vs Controls = I"
-    i.an$Denominator[i.an$ID == "02E.0031"]<-"S(I)"
+    i.an$Source.of.Variation[i.an$ID == "02E.0031"]<-"Treatment = T"
+    i.an$Denominator[i.an$ID == "02E.0031"]<-"S(T)"
     i.an$F.Value[i.an$ID == "02E.0031"]<-i.an$Mean.Sq[i.an$ID == "02E.0031"] / i.an$Mean.Sq[i.an$ID == "05EG.0030"]
     i.an$P.Value.Upper.Tail[i.an$ID == "02E.0031"]<- stats::pf(i.an$F.Value[i.an$ID == "02E.0031"], i.an$Df[i.an$ID == "02E.0031"], i.an$Df[i.an$ID == "05EG.0030"], lower.tail = F)
     #      i.an$P.Value.Lower.Tail[i.an$ID == "02E.0031"]<- stats::pf(i.an$F.Value[i.an$ID == "02E.0031"], i.an$Df[i.an$ID == "02E.0031"], i.an$Df[i.an$ID == "05EG.0030"], lower.tail = T)
@@ -1529,8 +1529,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "02E.0032"]<-"(t-1)"
     i.an$Calculated.From[i.an$ID == "02E.0032"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "02E.0032"]<-i.an$Sum.Sq[i.an$ID == "02E.0032"] / i.an$Df[i.an$ID == "02E.0032"]
-    i.an$Source.of.Variation[i.an$ID == "02E.0032"]<-"Treatment = T = Impact vs Controls = I"
-    i.an$Denominator[i.an$ID == "02E.0032"]<-"PxI+S(I)+PxS(I)"
+    i.an$Source.of.Variation[i.an$ID == "02E.0032"]<-"Treatment = T"
+    i.an$Denominator[i.an$ID == "02E.0032"]<-"PxT+S(T)+PxS(T)"
     i.an$Df.Pooled[i.an$ID == "02E.0032"]<-i.an$Df[i.an$ID == "03DE.0030"] + i.an$Df[i.an$ID == "05EG.0030"] + i.an$Df[i.an$ID == "06DEG.0030"]
     i.an$Sum.Sq.Pooled[i.an$ID == "02E.0032"]<-i.an$Sum.Sq[i.an$ID == "03DE.0030"] + i.an$Sum.Sq[i.an$ID == "05EG.0030"] +i.an$Sum.Sq[i.an$ID == "06DEG.0030"]
     i.an$Mean.Sq.Pooled[i.an$ID == "02E.0032"] <- i.an$Sum.Sq.Pooled[i.an$ID == "02E.0032"] / i.an$Df.Pooled[i.an$ID == "02E.0032"]
@@ -1544,8 +1544,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "02E.0033"]<-"(t-1)"
     i.an$Calculated.From[i.an$ID == "02E.0033"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "02E.0033"]<-i.an$Sum.Sq[i.an$ID == "02E.0033"] / i.an$Df[i.an$ID == "02E.0033"]
-    i.an$Source.of.Variation[i.an$ID == "02E.0033"]<-"Treatment = T = Impact vs Controls = I"
-    i.an$Denominator[i.an$ID == "02E.0033"]<-"PxI+S(I)+C(P)"
+    i.an$Source.of.Variation[i.an$ID == "02E.0033"]<-"Treatment = T"
+    i.an$Denominator[i.an$ID == "02E.0033"]<-"PxT+S(T)+C(P)"
     i.an$Df.Pooled[i.an$ID == "02E.0033"]<-i.an$Df[i.an$ID == "03DE.0030"]  + i.an$Df[i.an$ID == "05EG.0030"] + c.an$Df[c.an$ID == "07DEn.0040"]
     i.an$Sum.Sq.Pooled[i.an$ID == "02E.0033"]<-i.an$Sum.Sq[i.an$ID == "03DE.0030"] + i.an$Sum.Sq[i.an$ID == "05EG.0030"] + c.an$Sum.Sq[c.an$ID == "07DEn.0040"]
     i.an$Mean.Sq.Pooled[i.an$ID == "02E.0033"] <- i.an$Sum.Sq.Pooled[i.an$ID == "02E.0033"] / i.an$Df.Pooled[i.an$ID == "02E.0033"]
@@ -1559,8 +1559,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "02E.0034"]<-"(t-1)"
     i.an$Calculated.From[i.an$ID == "02E.0034"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "02E.0034"]<-i.an$Sum.Sq[i.an$ID == "02E.0034"] / i.an$Df[i.an$ID == "02E.0034"]
-    i.an$Source.of.Variation[i.an$ID == "02E.0034"]<-"Treatment = T = Impact vs Controls = I"
-    i.an$Denominator[i.an$ID == "02E.0034"]<-"PxI+S(I)+PxS(I)+C(P)+S(C(P))"
+    i.an$Source.of.Variation[i.an$ID == "02E.0034"]<-"Treatment = T"
+    i.an$Denominator[i.an$ID == "02E.0034"]<-"PxT+S(T)+PxS(T)+C(P)+S(C(P))"
     i.an$Df.Pooled[i.an$ID == "02E.0034"]<-i.an$Df[i.an$ID == "03DE.0030"]  + i.an$Df[i.an$ID == "05EG.0030"] + i.an$Df[i.an$ID == "06DEG.0030"] + c.an$Df[c.an$ID == "07DEn.0040"] + c.an$Df[c.an$ID == "08DEGn.0040"]
     i.an$Sum.Sq.Pooled[i.an$ID == "02E.0034"]<-i.an$Sum.Sq[i.an$ID == "03DE.0030"] + i.an$Sum.Sq[i.an$ID == "05EG.0030"] + c.an$Sum.Sq[c.an$ID == "07DEn.0040"] + c.an$Sum.Sq[c.an$ID == "08DEGn.0040"]
     i.an$Mean.Sq.Pooled[i.an$ID == "02E.0034"] <- i.an$Sum.Sq.Pooled[i.an$ID == "02E.0034"] / i.an$Df.Pooled[i.an$ID == "02E.0034"]
@@ -1588,7 +1588,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       c.an$Df.Formula[c.an$ID == "07DEn.0041"]<-"p(c-1)"
       c.an$Calculated.From[c.an$ID == "07DEn.0041"]<-"sym.NC"
       c.an$Mean.Sq[c.an$ID == "07DEn.0041"] <- c.an$Sum.Sq[c.an$ID == "07DEn.0041"] / c.an$Df[c.an$ID == "07DEn.0041"]
-      c.an$Source.of.Variation[c.an$ID == "07DEn.0041"]<-"Control location in Place = C(P)"
+      c.an$Source.of.Variation[c.an$ID == "07DEn.0041"]<-"Control location(P) = C(P)"
       c.an$Denominator[c.an$ID == "07DEn.0041"]<-"S(C(P))+Residuals"
       c.an$Df.Pooled[c.an$ID == "07DEn.0041"]<- c.an$Df[c.an$ID == "08DEGn.0040"] + f.an$Df[f.an$ID == "12R.0000"]
       c.an$Sum.Sq.Pooled[c.an$ID == "07DEn.0041"]<- c.an$Sum.Sq[c.an$ID == "08DEGn.0040"] + f.an$Sum.Sq[f.an$ID == "12R.0000"]
@@ -1602,7 +1602,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       i.an$Df.Formula[i.an$ID == "06DEG.0031"]<-"(p-1)(s-1)"
       i.an$Calculated.From[i.an$ID == "06DEG.0031"]<-"sym.F-sym.C"
       i.an$Mean.Sq[i.an$ID == "06DEG.0031"]<-i.an$Sum.Sq[i.an$ID == "06DEG.0031"] / i.an$Df[i.an$ID == "06DEG.0031"]
-      i.an$Source.of.Variation[i.an$ID == "06DEG.0031"]<-"P x S(I)"
+      i.an$Source.of.Variation[i.an$ID == "06DEG.0031"]<-"P x S(T)"
       i.an$Denominator[i.an$ID == "06DEG.0031"]<-"S(C(P))+Residuals"
       i.an$Df.Pooled[i.an$ID == "06DEG.0031"]<- c.an$Df[c.an$ID == "08DEGn.0040"] + f.an$Df[f.an$ID == "12R.0000"]
       i.an$Sum.Sq.Pooled[i.an$ID == "06DEG.0031"]<- c.an$Sum.Sq[c.an$ID == "08DEGn.0040"] + f.an$Sum.Sq[f.an$ID == "12R.0000"]
@@ -1617,8 +1617,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       i.an$Df.Formula[i.an$ID == "05EG.0031"]<-"(s-1)"
       i.an$Calculated.From[i.an$ID == "05EG.0031"]<-"sym.F-sym.C"
       i.an$Mean.Sq[i.an$ID == "05EG.0031"]<-i.an$Sum.Sq[i.an$ID == "05EG.0031"] / i.an$Df[i.an$ID == "05EG.0031"]
-      i.an$Source.of.Variation[i.an$ID == "05EG.0031"]<-"Sites(I) = S(I)"
-      i.an$Denominator[i.an$ID == "05EG.0031"]<-"PxS(I)+S(C(P))"
+      i.an$Source.of.Variation[i.an$ID == "05EG.0031"]<-"Sites(T) = S(T)"
+      i.an$Denominator[i.an$ID == "05EG.0031"]<-"PxS(T)+S(C(P))"
       i.an$Df.Pooled[i.an$ID == "05EG.0031"]<- i.an$Df[i.an$ID == "06DEG.0030"] + c.an$Df[c.an$ID == "08DEGn.0040"]
       i.an$Sum.Sq.Pooled[i.an$ID == "05EG.0031"]<- i.an$Sum.Sq[i.an$ID == "06DEG.0030"] + c.an$Sum.Sq[c.an$ID == "08DEGn.0040"]
       i.an$Mean.Sq.Pooled[i.an$ID == "05EG.0031"] <- i.an$Sum.Sq.Pooled[i.an$ID == "05EG.0031"] / i.an$Df.Pooled[i.an$ID == "05EG.0031"]
@@ -1632,8 +1632,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       i.an$Df.Formula[i.an$ID == "05EG.0032"]<-"(s-1)"
       i.an$Calculated.From[i.an$ID == "05EG.0032"]<-"sym.F-sym.C"
       i.an$Mean.Sq[i.an$ID == "05EG.0032"]<-i.an$Sum.Sq[i.an$ID == "05EG.0032"] / i.an$Df[i.an$ID == "05EG.0032"]
-      i.an$Source.of.Variation[i.an$ID == "05EG.0032"]<-"Sites(I) = S(I)"
-      i.an$Denominator[i.an$ID == "05EG.0032"]<-"PxS(I)+S(C(P))+Residuals"
+      i.an$Source.of.Variation[i.an$ID == "05EG.0032"]<-"Sites(T) = S(T)"
+      i.an$Denominator[i.an$ID == "05EG.0032"]<-"PxS(T)+S(C(P))+Residuals"
       i.an$Df.Pooled[i.an$ID == "05EG.0032"]<- i.an$Df.Pooled[i.an$ID == "05EG.0031"] + f.an$Df[f.an$ID == "12R.0000"]
       i.an$Sum.Sq.Pooled[i.an$ID == "05EG.0032"]<- i.an$Sum.Sq.Pooled[i.an$ID == "05EG.0031"] + f.an$Sum.Sq[f.an$ID == "12R.0000"]
       i.an$Mean.Sq.Pooled[i.an$ID == "05EG.0032"] <- i.an$Sum.Sq.Pooled[i.an$ID == "05EG.0032"] / i.an$Df.Pooled[i.an$ID == "05EG.0032"]
@@ -1647,8 +1647,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       i.an$Df.Formula[i.an$ID == "03DE.0033"]<-"(p-1)(t-1)"
       i.an$Calculated.From[i.an$ID == "03DE.0033"]<-"sym.F-sym.C"
       i.an$Mean.Sq[i.an$ID == "03DE.0033"]<-i.an$Sum.Sq[i.an$ID == "03DE.0033"] / i.an$Df[i.an$ID == "03DE.0033"]
-      i.an$Source.of.Variation[i.an$ID == "03DE.0033"]<-"P x T = P x I"
-      i.an$Denominator[i.an$ID == "03DE.0033"]<-"C(P)+PxS(I)+S(C(P))+Residuals"
+      i.an$Source.of.Variation[i.an$ID == "03DE.0033"]<-"P x T"
+      i.an$Denominator[i.an$ID == "03DE.0033"]<-"C(P)+PxS(T)+S(C(P))+Residuals"
       i.an$Df.Pooled[i.an$ID == "03DE.0033"]<-i.an$Df.Pooled[i.an$ID == "03DE.0032"] + f.an$Df[f.an$ID == "12R.0000"]
       i.an$Sum.Sq.Pooled[i.an$ID == "03DE.0033"]<-i.an$Sum.Sq.Pooled[i.an$ID == "03DE.0032"] + f.an$Sum.Sq[f.an$ID == "12R.0000"]
       i.an$Mean.Sq.Pooled[i.an$ID == "03DE.0033"] <- i.an$Sum.Sq.Pooled[i.an$ID == "03DE.0033"] / i.an$Df.Pooled[i.an$ID == "02E.0032"]
@@ -1662,8 +1662,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       i.an$Df.Formula[i.an$ID == "02E.0035"]<-"(t-1)"
       i.an$Calculated.From[i.an$ID == "02E.0035"]<-"sym.F-sym.C"
       i.an$Mean.Sq[i.an$ID == "02E.0035"]<-i.an$Sum.Sq[i.an$ID == "02E.0035"] / i.an$Df[i.an$ID == "02E.0035"]
-      i.an$Source.of.Variation[i.an$ID == "02E.0035"]<-"Treatment = T = Impact vs Controls = I"
-      i.an$Denominator[i.an$ID == "02E.0035"]<-"PxI+S(I)+PxS(I)+C(P)+S(C(P)+Residuals"
+      i.an$Source.of.Variation[i.an$ID == "02E.0035"]<-"Treatment = T"
+      i.an$Denominator[i.an$ID == "02E.0035"]<-"PxT+S(T)+PxS(T)+C(P)+S(C(P)+Residuals"
       i.an$Df.Pooled[i.an$ID == "02E.0035"]<- i.an$Df.Pooled[i.an$ID == "02E.0034"] + f.an$Df[f.an$ID == "12R.0000"]
       i.an$Sum.Sq.Pooled[i.an$ID == "02E.0035"]<-i.an$Sum.Sq.Pooled[i.an$ID == "02E.0034"] + f.an$Sum.Sq[f.an$ID == "12R.0000"]
       i.an$Mean.Sq.Pooled[i.an$ID == "02E.0035"] <- i.an$Sum.Sq.Pooled[i.an$ID == "02E.0035"] / i.an$Df.Pooled[i.an$ID == "02E.0035"]
@@ -1727,7 +1727,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "03DE.0030"]<-"(p-1)(t-1)"
     i.an$Mean.Sq[i.an$ID == "03DE.0030"]<-i.an$Sum.Sq[i.an$ID == "03DE.0030"] / i.an$Df[i.an$ID == "03DE.0030"]
     i.an$Calculated.From[i.an$ID == "03DE.0030"]<-"sym.F-sym.C"
-    i.an$Source.of.Variation[i.an$ID == "03DE.0030"]<-"P x T = P x I"
+    i.an$Source.of.Variation[i.an$ID == "03DE.0030"]<-"P x T"
     i.an$Denominator[i.an$ID == "03DE.0030"]<-"C(P)"
     i.an$F.Value[i.an$ID == "03DE.0030"]<-i.an$Mean.Sq[i.an$ID == "03DE.0030"] / c.an$Mean.Sq[c.an$ID == "07DEn.0040"]
     i.an$P.Value.Upper.Tail[i.an$ID == "03DE.0030"]<- stats::pf(i.an$F.Value[i.an$ID == "03DE.0030"], i.an$Df[i.an$ID == "03DE.0030"], c.an$Df[c.an$ID == "07DEn.0040"], lower.tail = F)
@@ -1741,8 +1741,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     i.an$Df.Formula[i.an$ID == "02E.0030"]<-"(t-1)"
     i.an$Calculated.From[i.an$ID == "02E.0030"]<-"sym.F-sym.C"
     i.an$Mean.Sq[i.an$ID == "02E.0030"]<-i.an$Sum.Sq[i.an$ID == "02E.0030"] / i.an$Df[i.an$ID == "02E.0030"]
-    i.an$Source.of.Variation[i.an$ID == "02E.0030"]<-"Treatment = T = Impact vs Controls = I"
-    i.an$Denominator[i.an$ID == "02E.0030"]<-"PxI"
+    i.an$Source.of.Variation[i.an$ID == "02E.0030"]<-"Treatment = T"
+    i.an$Denominator[i.an$ID == "02E.0030"]<-"PxT"
     i.an$F.Value[i.an$ID == "02E.0030"]<-i.an$Mean.Sq[i.an$ID == "02E.0030"] / i.an$Mean.Sq[i.an$ID == "03DE.0030"]
     i.an$P.Value.Upper.Tail[i.an$ID == "02E.0030"]<- stats::pf(i.an$F.Value[i.an$ID == "02E.0030"], i.an$Df[i.an$ID == "02E.0030"], i.an$Df[i.an$ID == "03DE.0030"], lower.tail = F)
     #      i.an$P.Value.Lower.Tail[i.an$ID == "02E.0030"]<- stats::pf(i.an$F.Value[i.an$ID == "02E.0030"], i.an$Df[i.an$ID == "02E.0030"], i.an$Df[i.an$ID == "03DE.0030"], lower.tail = T)
@@ -1767,7 +1767,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       i.an$Df.Formula[i.an$ID == "03DE.0031"]<-"(p-1)(t-1)"
       i.an$Mean.Sq[i.an$ID == "03DE.0031"]<-i.an$Sum.Sq[i.an$ID == "03DE.0031"] / i.an$Df[i.an$ID == "03DE.0031"]
       i.an$Calculated.From[i.an$ID == "03DE.0031"]<-"sym.F-sym.C"
-      i.an$Source.of.Variation[i.an$ID == "03DE.0031"]<-"P x T = P x I"
+      i.an$Source.of.Variation[i.an$ID == "03DE.0031"]<-"P x T"
       i.an$Denominator[i.an$ID == "03DE.0031"]<-"C(P)+Residuals"
       i.an$Df.Pooled[i.an$ID == "03DE.0031"]<-c.an$Df[c.an$ID == "07DEn.0040"] + f.an$Df[f.an$ID == "12R.0000"]
       i.an$Sum.Sq.Pooled[i.an$ID == "03DE.0031"]<-c.an$Sum.Sq[c.an$ID == "07DEn.0040"] + f.an$Sum.Sq[f.an$ID == "12R.0000"]
@@ -1782,8 +1782,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       i.an$Df.Formula[i.an$ID == "02E.0031"]<-"(t-1)"
       i.an$Calculated.From[i.an$ID == "02E.0031"]<-"sym.F-sym.C"
       i.an$Mean.Sq[i.an$ID == "02E.0031"]<-i.an$Sum.Sq[i.an$ID == "02E.0031"] / i.an$Df[i.an$ID == "02E.0031"]
-      i.an$Source.of.Variation[i.an$ID == "02E.0031"]<-"Treatment = T = Impact vs Controls = I"
-      i.an$Denominator[i.an$ID == "02E.0031"]<-"PxI+C(P)"
+      i.an$Source.of.Variation[i.an$ID == "02E.0031"]<-"Treatment = T"
+      i.an$Denominator[i.an$ID == "02E.0031"]<-"PxT+C(P)"
       i.an$Df.Pooled[i.an$ID == "02E.0031"]<-i.an$Df[i.an$ID == "03DE.0030"] + c.an$Df[c.an$ID == "07DEn.0040"]
       i.an$Sum.Sq.Pooled[i.an$ID == "02E.0031"]<-i.an$Sum.Sq[i.an$ID == "03DE.0030"] + c.an$Sum.Sq[c.an$ID == "07DEn.0040"]
       i.an$Mean.Sq.Pooled[i.an$ID == "02E.0031"] <- i.an$Sum.Sq.Pooled[i.an$ID == "02E.0031"] / i.an$Df.Pooled[i.an$ID == "02E.0031"]
@@ -1797,8 +1797,8 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       i.an$Df.Formula[i.an$ID == "02E.0032"]<-"(t-1)"
       i.an$Calculated.From[i.an$ID == "02E.0032"]<-"sym.F-sym.C"
       i.an$Mean.Sq[i.an$ID == "02E.0032"]<-i.an$Sum.Sq[i.an$ID == "02E.0032"] / i.an$Df[i.an$ID == "02E.0032"]
-      i.an$Source.of.Variation[i.an$ID == "02E.0032"]<-"Treatment = T = Impact vs Controls = I"
-      i.an$Denominator[i.an$ID == "02E.0032"]<-"PxI+C(P)+Residuals"
+      i.an$Source.of.Variation[i.an$ID == "02E.0032"]<-"Treatment = T"
+      i.an$Denominator[i.an$ID == "02E.0032"]<-"PxT+C(P)+Residuals"
       i.an$Df.Pooled[i.an$ID == "02E.0032"]<- i.an$Df.Pooled[i.an$ID == "02E.0031"] + f.an$Df[f.an$ID == "12R.0000"]
       i.an$Sum.Sq.Pooled[i.an$ID == "02E.0032"]<-i.an$Sum.Sq.Pooled[i.an$ID == "02E.0031"] + f.an$Sum.Sq[f.an$ID == "12R.0000"]
       i.an$Mean.Sq.Pooled[i.an$ID == "02E.0032"] <- i.an$Sum.Sq.Pooled[i.an$ID == "02E.0032"] / i.an$Df.Pooled[i.an$ID == "02E.0032"]
