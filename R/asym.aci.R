@@ -1412,7 +1412,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     c.an$Df.Formula[c.an$ID == "08DEGn.0040"]<-"pc(s-1)"
     c.an$Calculated.From[c.an$ID == "08DEGn.0040"]<-"sym.NC"
     c.an$Mean.Sq[c.an$ID == "08DEGn.0040"] <- c.an$Sum.Sq[c.an$ID == "08DEGn.0040"] / c.an$Df[c.an$ID == "08DEGn.0040"]
-    c.an$Source.of.Variation[c.an$ID == "08DEGn.0040"]<-"Control sites(C(P)) = S(C(P))"
+    c.an$Source.of.Variation[c.an$ID == "08DEGn.0040"]<-"Control sites(P) = S(C(P))"
     c.an$Denominator[c.an$ID == "08DEGn.0040"]<-"Residuals"
     c.an$F.Value[c.an$ID == "08DEGn.0040"]<-c.an$Mean.Sq[c.an$ID == "08DEGn.0040"] / f.an$Mean.Sq[f.an$ID == "12R.0000"]
     c.an$P.Value.Upper.Tail[c.an$ID == "08DEGn.0040"]<- stats::pf(c.an$F.Value[c.an$ID == "08DEGn.0040"], c.an$Df[c.an$ID == "08DEGn.0040"], f.an$Df[f.an$ID == "12R.0000"], lower.tail = F)
@@ -3404,7 +3404,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
   #  Sites(in Locations(in Places))
   if(aav.model == "DEG") {
     # S(C(P))
-    aci$Next.Step[aci$ID == "08DEGn.0040"]<-"Go to PxS(Tr) and C(P)"
+    aci$Next.Step[aci$ID == "08DEGn.0040"]<-"Go to PxS(T) and C(P)"
     ifelse(aci$Significant[aci$ID == "08DEGn.0040"] != "*",
            aci$Interpretation[aci$ID == "08DEGn.0040"]<- "Control sites do not differ",
            aci$Interpretation[aci$ID == "08DEGn.0040"]<-aci$Interpretation[aci$ID == "08DEGn.0040"]<- "Control sites differ")
@@ -3413,20 +3413,20 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     DEG06<- c("06DEG.0030","06DEG.0031")
     DEG06n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "06DEG.0030"]),
                     is.na(aci$Post.Hoc.Pooling[aci$ID == "06DEG.0031"])) == F)
-    aci$Next.Step[aci$ID == DEG06[DEG06n]]<-"Go to S(Tr) and PxTr"
+    aci$Next.Step[aci$ID == DEG06[DEG06n]]<-"Go to S(T) and PxT"
     ifelse(aci$Significant[aci$ID == DEG06[DEG06n]] != "*",
            aci$Interpretation[aci$ID == DEG06[DEG06n]]<- "Differences between impact and control sites do not vary from place to place",
-           aci$Interpretation[aci$ID == DEG06[DEG06n]]<-aci$Interpretation[aci$ID == DEG06[DEG06n]]<- "CAUTION - Differences between impact and control sites vary from place to place")
+           aci$Interpretation[aci$ID == DEG06[DEG06n]]<-aci$Interpretation[aci$ID == DEG06[DEG06n]]<- "IMPACT DETECTED: site-specific scale impact")
 
     # S(I)
     EG05<- c("05EG.0030","05EG.0031","05EG.0032")
     EG05n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0030"]),
                    is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0031"]),
                    is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0032"])) == F)
-    aci$Next.Step[aci$ID == EG05[EG05n]]<-"Go to Tr"
+    aci$Next.Step[aci$ID == EG05[EG05n]]<-"Go to T"
     ifelse(aci$Significant[aci$ID == EG05[EG05n]] != "*",
            aci$Interpretation[aci$ID == EG05[EG05n]]<- "Impact and control sites do not differ",
-           aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == EG05[EG05n]]<- "IMPACT DETECTED from small-scale: Impact and control sites differ")
+           aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == EG05[EG05n]]<- "IMPACT DETECTED: generalized site scale impact")
   }
 
 
@@ -3437,7 +3437,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     DEn07<- c("07DEn.0040","07DEn.0041")
     DEn07n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "07DEn.0040"]),
                     is.na(aci$Post.Hoc.Pooling[aci$ID == "07DEn.0041"])) == F)
-    aci$Next.Step[aci$ID == DEn07[DEn07n]]<-"Go to P and PxTr"
+    aci$Next.Step[aci$ID == DEn07[DEn07n]]<-"Go to P and PxT"
     ifelse(aci$Significant[aci$ID == DEn07[DEn07n]] != "*",
            aci$Interpretation[aci$ID == DEn07[DEn07n]]<- "Control locations do not differ",
            aci$Interpretation[aci$ID == DEn07[DEn07n]]<-aci$Interpretation[aci$ID == DEn07[DEn07n]]<- "Control locations differ")
@@ -3448,10 +3448,10 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
                     is.na(aci$Post.Hoc.Pooling[aci$ID == "03DE.0031"]),
                     is.na(aci$Post.Hoc.Pooling[aci$ID == "03DE.0032"]),
                     is.na(aci$Post.Hoc.Pooling[aci$ID == "03DE.0033"])) == F)
-    aci$Next.Step[aci$ID == DE03p[DE03pn]]<-"Go to Tr"
+    aci$Next.Step[aci$ID == DE03p[DE03pn]]<-"Go to T"
     ifelse(aci$Significant[aci$ID == DE03p[DE03pn]] != "*",
            aci$Interpretation[aci$ID == DE03p[DE03pn]]<- "Differences between impact and control locations do not vary from place to place",
-           aci$Interpretation[aci$ID == DE03p[DE03pn]]<-aci$Interpretation[aci$ID == DE03p[DE03pn]]<- "CAUTION - Differences between impact and control locations vary from place to place")
+           aci$Interpretation[aci$ID == DE03p[DE03pn]]<-aci$Interpretation[aci$ID == DE03p[DE03pn]]<- "IMPACT DETECTED: local-specific scale impact")
 
     # I = Treatment
     DE02<- c("02E.0030","02E.0031","02E.0032","02E.0033","02E.0034","02E.0035")
@@ -3464,7 +3464,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     aci$Next.Step[aci$ID == DE02[DE02n]]<-"END"
     ifelse(aci$Significant[aci$ID == DE02[DE02n]] != "*",
            aci$Interpretation[aci$ID == DE02[DE02n]]<- "Impact and control locations do not differ",
-           aci$Interpretation[aci$ID == DE02[DE02n]]<-aci$Interpretation[aci$ID == DE02[DE02n]]<- "IMPACT DETECTED from local-scale: Impact and control locations differ")
+           aci$Interpretation[aci$ID == DE02[DE02n]]<-aci$Interpretation[aci$ID == DE02[DE02n]]<- "IMPACT DETECTED: generalized local-scale impact")
 
     #P = Place
     D01<- c("01D.0000","01D.0001","01D.0002")
