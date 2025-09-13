@@ -2850,7 +2850,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       DE03n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "03DE.0030"]), is.na(aci$Post.Hoc.Pooling[aci$ID == "03DE.0031"])) == F)
 
       # 	F = (MSIC / MSPxIC) 02E.0030
-      if(aci$P.Value.Upper.Tail[aci$ID == "03DE.0030"] < p.pooling) aci$Post.Hoc.Pooling[aci$ID == "02E.0030"]<-"Cannot be pooled"
+      if(aci$P.Value.Upper.Tail[aci$ID == DE03[DE03n]] < p.pooling) aci$Post.Hoc.Pooling[aci$ID == "02E.0030"]<-"Cannot be pooled"
       # 	If varPxIC <= 0 and varCC(P) > 0, then F = (MS_IC / MSpooled), where MSpooled = (SSPxIC + SSCC(P)) / (dfPxIC + dfCC(P)) = SS1/df1
       if(aci$P.Value.Upper.Tail[aci$ID == DE03[DE03n]] >= p.pooling &
          aci$P.Value.Upper.Tail[aci$ID == "07DEn.0040"] < p.pooling) aci$Post.Hoc.Pooling[aci$ID == "02E.0031"]<-"Can be pooled"
@@ -3025,7 +3025,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
          aci$P.Value.Upper.Tail[aci$ID == "08DEGn.0040"] >= p.pooling) aci$Post.Hoc.Pooling[aci$ID == "02E.0035"]<-"Can be pooled"
 
       # 	F = (MSP / MS_CC(P))
-      if(aci$P.Value.Upper.Tail[aci$ID == "07DEn.0040"] < p.pooling) aci$Post.Hoc.Pooling[aci$ID == "01D.0000"]<-"Cannot be pooled"
+      if(aci$P.Value.Upper.Tail[aci$ID == DEn07[DEn07n]] < p.pooling) aci$Post.Hoc.Pooling[aci$ID == "01D.0000"]<-"Cannot be pooled"
       # 	If varCC(P) <= 0 and varS(CC(P)) > 0, then F = (MSP / MSpooled), where MSpooled = (SSCC(P) + SS_S(CC(P))) / (dfCC(P) + dfS(CC(P))) = SS1/df1
       if(aci$P.Value.Upper.Tail[aci$ID == DEn07[DEn07n]] >= p.pooling &
          aci$P.Value.Upper.Tail[aci$ID == "08DEGn.0040"] < p.pooling) aci$Post.Hoc.Pooling[aci$ID == "01D.0001"]<-"Can be pooled"
