@@ -817,7 +817,7 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
       # 	If varT(P(Aft)) xCC <= 0, then F = (MS_T(P(Aft)) xIC / MSpooled), where MSpooled = (SST(P(Aft)) xCC + SSRes) / (dfT(P(Aft)) xCC + dfRes)
       ai.an<-dplyr::bind_rows(ai.an,di10AEBC.2030)
       ai.an$ID[ai.an$Source.of.Variation == "B:E:C"]<-"10AEBC.2031"
-      ai.an$Df.Formula[ai.an$ID == "10AEBC.2031"]<-"(t-1)"
+      ai.an$Df.Formula[ai.an$ID == "10AEBC.2031"]<-"p(t-1)"
       ai.an$Calculated.From[ai.an$ID == "10AEBC.2031"]<-"sym.F-sym.B-sym.C+sym.BC" # impact after
       ai.an$Mean.Sq[ai.an$ID == "10AEBC.2031"]<-ai.an$Sum.Sq[ai.an$ID == "10AEBC.2031"] / ai.an$Df[ai.an$ID == "10AEBC.2031"]
       ai.an$Source.of.Variation[ai.an$ID == "10AEBC.2031"] <-"T(P(Aft)) x I"
@@ -2234,10 +2234,10 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
     bi.an$Calculated.From[bi.an$ID == "10AEBC.1030"]<-"sym.B-sym.CB"
     bi.an$Df.Formula[bi.an$ID == "10AEBC.1030"]<-"p(t-1)"
     bi.an$Mean.Sq[bi.an$ID == "10AEBC.1030"]<- bi.an$Sum.Sq[bi.an$ID == "10AEBC.1030"] / bi.an$Df[bi.an$ID == "10AEBC.1030"]
-    bi.an$Source.of.Variation[bi.an$ID == "10AEBC.1030"] <-"T(P(Bef) x I"
+    bi.an$Source.of.Variation[bi.an$ID == "10AEBC.1030"] <-"T(P(Bef)) x I"
     # 2-tail
     # 	Two-tailed test F = (MS_T(P(Bef)) xIC / MS_T(P(Aft)) xIC)
-    bi.an$Denominator[bi.an$ID == "10AEBC.1030"]<-"T(P(Aft)xI"
+    bi.an$Denominator[bi.an$ID == "10AEBC.1030"]<-"T(P(Aft))xI"
     bi.an$F.Value[bi.an$ID == "10AEBC.1030"]<- bi.an$Mean.Sq[bi.an$ID == "10AEBC.1030"] / ai.an$Mean.Sq[ai.an$ID == "10AEBC.2030"]
     bi.an$P.Value.Upper.Tail[bi.an$ID == "10AEBC.1030"]<- stats::pf(bi.an$F.Value[bi.an$ID == "10AEBC.1030"], bi.an$Df[bi.an$ID == "10AEBC.1030"], ai.an$Df[ai.an$ID == "10AEBC.2030"], lower.tail = F)
     bi.an$P.Value.Lower.Tail[bi.an$ID == "10AEBC.1030"]<- stats::pf(bi.an$F.Value[bi.an$ID == "10AEBC.1030"], bi.an$Df[bi.an$ID == "10AEBC.1030"], ai.an$Df[ai.an$ID == "10AEBC.2030"], lower.tail = T)
