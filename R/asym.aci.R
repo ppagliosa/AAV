@@ -2829,7 +2829,6 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       }
     }
 
-
 ###--------------------------------------------------------------------------
 ###--------------------------------------- Post-impact (Glasby) nao tem 2-tailed
   if(aav.model == "DE") {
