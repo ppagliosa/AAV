@@ -2792,29 +2792,35 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
              (aci$P.Value.Upper.Tail[aci$ID == BEC10[BEC10n]] < p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEG09[BEG09n]] < p.pooling)) aci$Post.Hoc.Pooling[aci$ID == "02E.0030"]<-"Cannot be pooled"
           # 	If varCC <= 0, varS(IC) <= 0 and varPxIC > 0, then F = (MSIC / MSpooled), where MSpooled = (SSCC + SSPxIC) / (dfCC + dfPxIC)
-          if((aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
+          if(aci$P.Value.Upper.Tail[aci$ID == E02.40[E02.40n]] >= p.pooling &
+             (aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BE03.30[BE03.30n]] < p.pooling)) aci$Post.Hoc.Pooling[aci$ID == "02E.0031"]<-"Can be pooled"
           # 	If varCC <= 0, varPxIC <= 0 and varS(IC) > 0, then F = (MSIC / MSpooled), where MSpooled = (SSCC + SSS(IC)) / (dfCC + dfS(IC))
-          if((aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] < p.pooling) &
+          if(aci$P.Value.Upper.Tail[aci$ID == E02.40[E02.40n]] >= p.pooling &
+             (aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] < p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BE03.30[BE03.30n]] >= p.pooling)) aci$Post.Hoc.Pooling[aci$ID == "02E.0032"]<-"Can be pooled"
           # 	If varCC <= 0, varPxIC <= 0, varS(IC) <=, varPxS(IC) <= 0 and varT(P)xIC > 0, then F = (MSIC / MSpooled), Where MSpooled = (SSCC + SSPxIC + SSS(IC) + SST(P)xIC) / (dfCC + dfPxIC + dfS(IC) + dfT(P)xIC)
-          if((aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
+          if(aci$P.Value.Upper.Tail[aci$ID == E02.40[E02.40n]] >= p.pooling &
+             (aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BE03.30[BE03.30n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEC10[BEC10n]] < p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEG09[BEG09n]] >= p.pooling)) aci$Post.Hoc.Pooling[aci$ID == "02E.0033"]<-"Can be pooled"
           # 	If varCC <= 0, varPxIC <= 0, varS(IC) <=, varT(P)xIC <= 0 and varPxS(IC) > 0, then F = (MSIC / MSpooled), Where MSpooled = (SSCC + SSPxIC + SSS(IC) + SSPxS(IC)) / (dfCC + dfPxIC + dfS(IC) + dfPxS(IC))
-          if((aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
+          if(aci$P.Value.Upper.Tail[aci$ID == E02.40[E02.40n]] >= p.pooling &
+             (aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BE03.30[BE03.30n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEC10[BEC10n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEG09[BEG09n]] < p.pooling)) aci$Post.Hoc.Pooling[aci$ID == "02E.0034"]<-"Can be pooled"
           # 	If varCC <= 0, varPxIC <= 0, varS(IC) <=, varT(P)xIC <= 0, varPxS(IC) <= 0 and varT(P)xS(IC) > 0, then F = (MSIC / MSpooled), Where MSpooled = (SSCC + SSPxIC + SSS(IC) + SST(P)xIC + SSPxS(IC) + SST(P)xS(IC)) / (dfCC + dfPxIC + dfS(IC) + dfT(P)xIC + dfPxS(IC) + dfT(P)xS(IC)) = SS1/df1
-          if((aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
+          if(aci$P.Value.Upper.Tail[aci$ID == E02.40[E02.40n]] >= p.pooling &
+             (aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BE03.30[BE03.30n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEC10[BEC10n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEG09[BEG09n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEGC11[BEGC11n]] < p.pooling)) aci$Post.Hoc.Pooling[aci$ID == "02E.0035"]<-"Can be pooled"
           # 	If varCC <= 0, varPxIC <= 0, varS(IC) <= 0, varT(P)xIC <= 0, varPxS(IC) <= 0 and varT(P)xS(IC) <= 0, then F = (MSIC / MSpooled), Where MSpooled = (SS1 + SSRes) / (df1 + dfRes)
-          if((aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
+          if(aci$P.Value.Upper.Tail[aci$ID == E02.40[E02.40n]] >= p.pooling &
+             (aci$P.Value.Upper.Tail[aci$ID == EG05[EG05n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BE03.30[BE03.30n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEC10[BEC10n]] >= p.pooling) &
              (aci$P.Value.Upper.Tail[aci$ID == BEG09[BEG09n]] >= p.pooling) &
@@ -3267,7 +3273,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
                      is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0043"]),
                      is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0044"])) == F)
 
-    E02<- c("02E.0030","02E.0031","02E.0032","02E.0033","02E.0034", "02E.0035", "02E.0036")
+    E02<- c("02E.0030","02E.0031","02E.0032","02E.0033","02E.0034","02E.0035","02E.0036")
     E02n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0030"]),
                   is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0031"]),
                   is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0032"]),
