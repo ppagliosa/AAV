@@ -3,6 +3,8 @@
 export(aav)
 export(asym.aci)
 export(asym.baci)
+export(ggmagnitude)
+export(magnitude)
 export(sym4asym)
 import(GAD)
 import(dplyr)

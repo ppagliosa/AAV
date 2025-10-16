@@ -34,3 +34,5 @@ Collate:
     'asym.aci.R'
     'aav.R'
     'data.R'
+    'ggmagnitude.R'
+    'magnitude.R'
