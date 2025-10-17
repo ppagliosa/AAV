@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggmagnitude.R
 \name{ggmagnitude}
 \alias{ggmagnitude}
-\title{Create a plot showing the estimated magnitude of the impact.}
+\title{Create a plot showing the estimated magnitude of an ecological impact}
 \usage{
 ggmagnitude(data, aav.design, n.ftemp, n.fspac)
 }
@@ -20,11 +20,11 @@ The function returns a xy plot with the original (top right), a random (= 0; bot
 and the estimated alterations on the mean and variance of the data (center).
 }
 \description{
-It provides a customised 'ggplot' to display estimates of impact magnitude
-based on the results from \code{\link[AAV]{magnitude}}.
+It provides a customised 'ggplot' for displaying the magnitude of an ecological
+impact based on the results from \code{\link[AAV]{magnitude}}.
 }
 \details{
-The magnitude of the impact is estimated using the same data types, designs, factors
+The magnitude of an ecological impact is estimated using the same data types, designs, factors
 and parameters as in \code{\link[AAV]{aav}}, but only considers one variable at a time.
 
 The estimates are plotted to each relevant term from the asymmetrical analysis of variance
@@ -52,7 +52,7 @@ In baci desing:
 
 In post-impact design with only one disturbed location and multiple control locations:
 \itemize{
-\item Impact vc Controls = I:   Long-term local-scale impact
+\item Impact vs Controls = I:   Long-term local-scale impact
 \item Site(I) = S(I):   Long-term small-scale impact
 \item Period x I = P x I:   Medium-term local-scale impact
 \item P x S(I):   Medium-term small-scale impact

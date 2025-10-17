@@ -1,8 +1,8 @@
-#' @title Create a plot showing the estimated magnitude of the impact.
+#' @title Create a plot showing the estimated magnitude of an ecological impact
 #'
 #' @description
-#' It provides a customised 'ggplot' to display estimates of impact magnitude
-#' based on the results from \code{\link[AAV]{magnitude}}.
+#' It provides a customised 'ggplot' for displaying the magnitude of an ecological
+#' impact based on the results from \code{\link[AAV]{magnitude}}.
 #'
 #' @param data a list genereted from \code{\link[AAV]{magnitude}}.
 #' @param aav.design \code{baci} for beyond Before/After-Control/Impact design or \code{aci} for Post-Impact design.
@@ -10,7 +10,7 @@
 #' @param n.fspac number of spatial factors.
 #'
 #' @details
-#' The magnitude of the impact is estimated using the same data types, designs, factors
+#' The magnitude of an ecological impact is estimated using the same data types, designs, factors
 #' and parameters as in \code{\link[AAV]{aav}}, but only considers one variable at a time.
 #'
 #' The estimates are plotted to each relevant term from the asymmetrical analysis of variance
@@ -36,7 +36,7 @@
 #' * T(P(Aft)) x S(I) or T(Aft) x S(I):   Short-term local-scale impact
 #'
 #' In post-impact design with only one disturbed location and multiple control locations:
-#' * Impact vc Controls = I:   Long-term local-scale impact
+#' * Impact vs Controls = I:   Long-term local-scale impact
 #' * Site(I) = S(I):   Long-term small-scale impact
 #' * Period x I = P x I:   Medium-term local-scale impact
 #' * P x S(I):   Medium-term small-scale impact

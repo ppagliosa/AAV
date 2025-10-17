@@ -1,8 +1,8 @@
 #' @title Estimates the magnitude of an ecological impact
 #'
 #' @description
-#' It provides an estimate of the magnitude of the impact on the mean and variance of the data
-#' that could be detected, given the observed P-Value from the asymmetrical analysis of variance.
+#' It provides an estimate of the magnitude of an ecological impact on the mean and variance of the data
+#' that can be detected, given the observed P-Value from the asymmetrical analysis of variance.
 #'
 #' @param data a data frame with temporal factors, spatial factors and variable(s).
 #' @param aav.design \code{baci} for beyond Before/After-Control/Impact design or \code{aci} for Post-Impact design.
@@ -25,13 +25,29 @@
 #' @param magnitude_var a vector to estimate alterations to the variance values of the data.
 #'
 #' @details
-#' The magnitude of the impact is estimated using the same data types, designs, factors
+#' The magnitude of an ecological impact is estimated using the same data types, designs, factors
 #' and parameters as in \code{\link[AAV]{aav}}, but only considers one variable at a time.
 #'
-#' The estimates are made to each relevant term from the asymmetrical analysis of variance
-#' in order to determine the magnitude of the impact.
-#' The terms can be interpreted separated each other.
-#' The relevant terms are:
+#' The estimates are made using either the original data from the control group
+#' (post-impact designs) or data from the control group before the impact (BACI design).
+#' These estimated values are then applied to the level of the relevant factors in the
+#' impact group (for post-impact designs) or to the impact group before the impact for BACI designs.
+#'
+#' The relevant factors depend on the number of temporal and spatial factors analysed.
+#' To estimate long-term or local-scale impacts, we manipulate all the data involved.
+#' To estimate medium-term, short-term or small-scale impacts, we modify just one
+#' relevant factor (one period, one time, one site, or one combination of these).
+#'
+#' The magnitude of the ecological impact on the mean and variance of the data
+#' is simulated using a linear function:
+#' Y = a + bX,
+#' where 'a' is the y-intercept (the additive constant, shift or constant), and 'b'
+#' is the slope (the multiplicative constant, scale factor or coefficient).
+#' The logic behind the calculation is that changing the mean involves modifying
+#' the intercept, while changing the variance involves modifying the slope.
+#' The random data is a resample from the original control or control-before data.
+#'
+#' The terms can be interpreted separated each other. The relevant terms are:
 #'
 #' In baci desing:
 #' * Before vs After x Impact vs Controls = B x I:   Long-term local-scale impact
@@ -42,7 +58,7 @@
 #' * T(P(Aft)) x S(I) or T(Aft) x S(I):   Short-term local-scale impact
 #'
 #' In post-impact design with only one disturbed location and multiple control locations:
-#' * Impact vc Controls = I:   Long-term local-scale impact
+#' * Impact vs Controls = I:   Long-term local-scale impact
 #' * Site(I) = S(I):   Long-term small-scale impact
 #' * Period x I = P x I:   Medium-term local-scale impact
 #' * P x S(I):   Medium-term small-scale impact
@@ -58,8 +74,8 @@
 #'
 #' @returns
 #' The function returns a list containing the following items:
-#' \item{data_magimp}{the original dataset, along with the simulated  magnitude
-#' of the impact on the mean and variance of the data.}
+#' \item{data_magimp}{the original dataset, along with a random data
+#' and the simulated  magnitude of the impact on the mean and variance of the data.}
 #' \item{aav_test}{the result of the complete asymmetrical ANOVA tables for the original
 #' dataset and for each simulation of the magnitude of the impact on the mean and variance of the data.}
 #' \item{extract_aav}{a table with the characterization of the design and factors used
@@ -189,6 +205,16 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
       }
 
       # Apply the magnitudes of the impact to the real data
+      # Apply a linear function: Y = a + bX
+      # a = y-intercept (the additive constant, the shift; the constant)
+      ## to change the mean, modify the intercept
+      # b = slope (the multiplicative constant, the scale factor; the coefficient)
+      ## to change variance, modify the slope
+      # Define the new variable as a linear function of the old one (the random variable).
+      # b_new <- sqrt(1 + magnitude of impact) # to  increase the variance
+      # b_new <- sqrt(1 - magnitude of impact) # to decrease the variance
+      # To keep the variance the same, you must set the b_new = 1
+
       # Magnitude over the data variation
       for (magVAR in magnitude_var) {
         b_new <- magVAR

@@ -45,8 +45,8 @@ Default is \code{1}.}
 }
 \value{
 The function returns a list containing the following items:
-\item{data_magimp}{the original dataset, along with the simulated  magnitude
-of the impact on the mean and variance of the data.}
+\item{data_magimp}{the original dataset, along with a random data
+and the simulated  magnitude of the impact on the mean and variance of the data.}
 \item{aav_test}{the result of the complete asymmetrical ANOVA tables for the original
 dataset and for each simulation of the magnitude of the impact on the mean and variance of the data.}
 \item{extract_aav}{a table with the characterization of the design and factors used
@@ -56,17 +56,33 @@ the magnitude of the mean alteration ('magMD'), the corresponding term of the an
 and the P-Value from the specific analysis ('p.value').}
 }
 \description{
-It provides an estimate of the magnitude of the impact on the mean and variance of the data
-that could be detected, given the observed P-Value from the asymmetrical analysis of variance.
+It provides an estimate of the magnitude of an ecological impact on the mean and variance of the data
+that can be detected, given the observed P-Value from the asymmetrical analysis of variance.
 }
 \details{
-The magnitude of the impact is estimated using the same data types, designs, factors
+The magnitude of an ecological impact is estimated using the same data types, designs, factors
 and parameters as in \code{\link[AAV]{aav}}, but only considers one variable at a time.
 
-The estimates are made to each relevant term from the asymmetrical analysis of variance
-in order to determine the magnitude of the impact.
-The terms can be interpreted separated each other.
-The relevant terms are:
+The estimates are made using either the original data from the control group
+(post-impact designs) or data from the control group before the impact (BACI design).
+These estimated values are then applied to the level of the relevant factors in the
+impact group (for post-impact designs) or to the impact group before the impact for BACI designs.
+
+The relevant factors depend on the number of temporal and spatial factors analysed.
+To estimate long-term or local-scale impacts, we manipulate all the data involved.
+To estimate medium-term, short-term or small-scale impacts, we modify just one
+relevant factor (one period, one time, one site, or one combination of these).
+
+The magnitude of the ecological impact on the mean and variance of the data
+is simulated using a linear function:
+Y = a + bX,
+where 'a' is the y-intercept (the additive constant, shift or constant), and 'b'
+is the slope (the multiplicative constant, scale factor or coefficient).
+The logic behind the calculation is that changing the mean involves modifying
+the intercept, while changing the variance involves modifying the slope.
+The random data is a resample from the original control or control-before data.
+
+The terms can be interpreted separated each other. The relevant terms are:
 
 In baci desing:
 \itemize{
@@ -80,7 +96,7 @@ In baci desing:
 
 In post-impact design with only one disturbed location and multiple control locations:
 \itemize{
-\item Impact vc Controls = I:   Long-term local-scale impact
+\item Impact vs Controls = I:   Long-term local-scale impact
 \item Site(I) = S(I):   Long-term small-scale impact
 \item Period x I = P x I:   Medium-term local-scale impact
 \item P x S(I):   Medium-term small-scale impact
