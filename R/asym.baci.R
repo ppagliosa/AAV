@@ -3511,10 +3511,22 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
 
   ###---------------------------------------------------------------  Final.Table
 
-  baci$Final.Table<-ifelse(is.na(baci$P.Value.Upper.Tail) == T, "Yes",
+
+#  baci$Final.Table<-ifelse(is.na(baci$P.Value.Upper.Tail) == T, "Yes",
+#                           ifelse(!is.na(baci$Post.Hoc.Pooling) == T, "Yes",
+#                                  ifelse(!is.na(baci$P.Value.Lower.Tail) &
+#                                           !is.na(baci$Interpretation) == T, "Yes","No")))
+
+  baci$Final.Table<-ifelse(str_ends(baci$ID,".0000") == T, "Yes",
                            ifelse(!is.na(baci$Post.Hoc.Pooling) == T, "Yes",
                                   ifelse(!is.na(baci$P.Value.Lower.Tail) &
                                            !is.na(baci$Interpretation) == T, "Yes","No")))
+  baci$Final.Table[baci$ID == "02E.0030"] <-"Yes"
+  baci$Final.Table[baci$ID == "02E.0040"] <-"Yes"
+  if("05EG.0030" %in% baci$ID) baci$Final.Table[baci$ID == "05EG.0030"] <-"Yes"
+  if("05EG.0040" %in% baci$ID) baci$Final.Table[baci$ID == "05EG.0040"] <-"Yes"
+  if("05EF.0030" %in% baci$ID) baci$Final.Table[baci$ID == "05EF.0030"] <-"Yes"
+  if("05EF.0040" %in% baci$ID) baci$Final.Table[baci$ID == "05EF.0040"] <-"Yes"
 
   ###-------------------------------------------------------------------------
 
