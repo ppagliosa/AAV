@@ -186,6 +186,7 @@
 #'
 #' @import GAD
 #'         dplyr
+#'         stringr
 #'
 #' @include sym4asym.R
 #' @include asym.aci.R

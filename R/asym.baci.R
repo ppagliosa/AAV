@@ -139,6 +139,7 @@
 #' ex.asym.baci.3t2s
 #'
 #' @import dplyr
+#'         stringr
 #'
 #' @include sym4asym.R
 #'
