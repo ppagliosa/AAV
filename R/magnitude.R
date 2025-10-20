@@ -719,6 +719,7 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
       }
     }
     if(aav.design == "aci" & n.ftemp != 0) {
+      if(aci.tailed.test == 1){
       if(tab$impType[1] == "L.imp" | tab$impType[1] == "obs") {
         tab$term[1]<- "I"
         #p.value
@@ -767,6 +768,67 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
           tab$term[8]<- "T x S(I)"
           #p.value
           tab$p.value[8]<-aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T x S(I)"  & aav.res$Final.Table == "Yes"]
+        }
+      }
+      }
+      if(aci.tailed.test == 2){
+        if(tab$impType[1] == "L.imp" | tab$impType[1] == "obs") {
+          tab$term[1]<- "I"
+          #p.value
+          tab$p.value[1]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "Impact vs Controls = I" & aav.res$Final.Table == "Yes"],
+                              aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "Impact vs Controls = I" & aav.res$Final.Table == "Yes"])
+        }
+        if(n.fspac == 2) {
+          if(tab$impType[2] == "S.imp" | tab$impType[1] == "obs") {
+            tab$term[2]<- "S(I)"
+            #p.value
+            tab$p.value[2]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "S(I)" & aav.res$Final.Table == "Yes"],
+                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "S(I)" & aav.res$Final.Table == "Yes"])
+          }
+        }
+        if(n.ftemp == 2) {
+          if(tab$impType[3] == "P.imp" | tab$impType[1] == "obs") {
+            tab$term[3]<- "P x I"
+            #p.value
+            tab$p.value[3]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "P x I"  & aav.res$Final.Table == "Yes"],
+                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "P x I"  & aav.res$Final.Table == "Yes"])
+          }
+          if(tab$impType[4] == "TP.imp" | tab$impType[1] == "obs") {
+            tab$term[4]<- "T(P) x I"
+            #p.value
+            tab$p.value[4]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T(P) x I"  & aav.res$Final.Table == "Yes"],
+                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T(P) x I"  & aav.res$Final.Table == "Yes"])
+          }
+        }
+        if(n.ftemp == 2 & n.fspac == 2) {
+          if(tab$impType[5] == "SP.imp" | tab$impType[1] == "obs") {
+            tab$term[5]<- "P x S(I)"
+            #p.value
+            tab$p.value[5]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "P x S(I)"  & aav.res$Final.Table == "Yes"],
+                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "P x S(I)"  & aav.res$Final.Table == "Yes"])
+          }
+          if(tab$impType[6] == "STP.imp" | tab$impType[1] == "obs") {
+            tab$term[6]<- "T(P) x S(I)"
+            #p.value
+            tab$p.value[6]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T(P) x S(I)"  & aav.res$Final.Table == "Yes"],
+                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T(P) x S(I)"  & aav.res$Final.Table == "Yes"])
+          }
+        }
+        if(n.ftemp == 1) {
+          if(tab$impType[7] == "T.imp" | tab$impType[1] == "obs") {
+            tab$term[7]<- "T x I"
+            #p.value
+            tab$p.value[7]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T x I"  & aav.res$Final.Table == "Yes"],
+                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T x I"  & aav.res$Final.Table == "Yes"])
+          }
+        }
+        if(n.ftemp == 1 & n.fspac == 2) {
+          if(tab$impType[8] == "ST.imp" | tab$impType[1] == "obs") {
+            tab$term[8]<- "T x S(I)"
+            #p.value
+            tab$p.value[8]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T x S(I)"  & aav.res$Final.Table == "Yes"],
+                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T x S(I)"  & aav.res$Final.Table == "Yes"])
+          }
         }
       }
     }

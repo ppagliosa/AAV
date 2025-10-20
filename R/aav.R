@@ -254,10 +254,16 @@ aav<- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.before = 
       asym.anova_final[[i]]<-asym.anova_complete[[i]]
       names(asym.anova_final)[i]<-colnames(md)[i]
       asym.anova_final[[i]]<-asym.anova_final[[i]][asym.anova_final[[i]]$Final.Table == "Yes",]
-      asym.anova_final[[i]]<-asym.anova_final[[i]][,names(asym.anova_final[[i]]) %in% c(
-        "Source.of.Variation","Df","Sum.Sq","Mean.Sq","F.Value",
-        "P.Value.Upper.Tail","P.Value.Lower.Tail","Next.Step", "Interpretation")]
-      if(aci.tailed.test == 1) asym.anova_final[[i]]$P.Value.Lower.Tail<-NULL
+      if(aci.tailed.test == 2) {
+        asym.anova_final[[i]]<-asym.anova_final[[i]][,names(asym.anova_final[[i]]) %in% c(
+          "Source.of.Variation","Df","Sum.Sq","Mean.Sq","F.Value",
+          "P.Value.Upper.Tail","P.Value.Lower.Tail","Next.Step", "Interpretation")]
+      }
+      if(aci.tailed.test == 1) {
+        asym.anova_final[[i]]<-asym.anova_final[[i]][,names(asym.anova_final[[i]]) %in% c(
+          "Source.of.Variation","Df","Sum.Sq","Mean.Sq","F.Value",
+          "P.Value.Upper.Tail","Next.Step", "Interpretation")]
+      }
     }
 
     if(aav.design == "baci") {
@@ -286,10 +292,10 @@ aav<- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.before = 
   aav.list<-list()
   aav.list[[1]]<-sym.anova
   names(aav.list)[[1]]<-"sym.anova"
-  aav.list[[2]]<-asym.anova_final
-  names(aav.list)[[2]]<-"asym.anova_final"
-  aav.list[[3]]<-asym.anova_complete
-  names(aav.list)[[3]]<-"asym.anova_complete"
+  aav.list[[2]]<-asym.anova_complete
+  names(aav.list)[[2]]<-"asym.anova_complete"
+  aav.list[[3]]<-asym.anova_final
+  names(aav.list)[[3]]<-"asym.anova_final"
 
   return(aav.list)
 }
