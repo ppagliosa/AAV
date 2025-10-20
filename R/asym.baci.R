@@ -2314,12 +2314,13 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
   # ns se o unico for menor que p.pooling; eliminate se o unico for maior que p.pooling;
   # ns para todos os outros (se os dois forem > P.avv/2)
   if(pooling != T | (pooling == T & p.aav < p.pooling)) {
-    baci$Significant<-ifelse(baci$P.Value.Upper.Tail <= (p.aav/2) & !is.na(baci$P.Value.Upper.Tail) |
-           baci$P.Value.Lower.Tail <= (p.aav/2) & !is.na(baci$P.Value.Lower.Tail), "*",
-         ifelse(baci$P.Value.Upper.Tail <= p.aav & !is.na(baci$P.Value.Upper.Tail) & is.na(baci$P.Value.Lower.Tail), "*",
-                ifelse(baci$P.Value.Upper.Tail <= p.pooling & !is.na(baci$P.Value.Upper.Tail) & is.na(baci$P.Value.Lower.Tail), "ns",
-                       ifelse(baci$P.Value.Upper.Tail > p.pooling & !is.na(baci$P.Value.Upper.Tail) & is.na(baci$P.Value.Lower.Tail),"ns (Can be Eliminated)",
-                              "ns"))))
+    baci$Significant<-ifelse(is.na(baci$P.Value.Upper.Tail), NA,
+                             ifelse(baci$P.Value.Upper.Tail <= (p.aav/2) |
+                                      (baci$P.Value.Lower.Tail <= (p.aav/2) & !is.na(baci$P.Value.Lower.Tail)), "*",
+         ifelse(baci$P.Value.Upper.Tail <= p.aav & is.na(baci$P.Value.Lower.Tail), "*",
+                ifelse(baci$P.Value.Upper.Tail <= p.pooling & is.na(baci$P.Value.Lower.Tail), "ns",
+                       ifelse(baci$P.Value.Upper.Tail > p.pooling & is.na(baci$P.Value.Lower.Tail),
+                              "ns (Can be Eliminated)", "ns")))))
 
 #    baci$Significant<-ifelse(baci$P.Value.Upper.Tail <= p.aav & !is.na(baci$P.Value.Upper.Tail) |
 #                               baci$P.Value.Lower.Tail <= p.aav & !is.na(baci$P.Value.Lower.Tail), "*",
@@ -2331,11 +2332,12 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
   if(pooling == T) {
     if(p.aav > p.pooling)   stop("p.aav must be equal or less than p.pooling")
     if(p.aav == p.pooling) {
-      baci$Significant<-ifelse(baci$P.Value.Upper.Tail <= (p.aav/2) & !is.na(baci$P.Value.Upper.Tail) |
-               baci$P.Value.Lower.Tail <= (p.aav/2) & !is.na(baci$P.Value.Lower.Tail), "*",
-             ifelse(baci$P.Value.Upper.Tail <= p.aav & !is.na(baci$P.Value.Upper.Tail) & is.na(baci$P.Value.Lower.Tail), "*",
-                    ifelse(baci$P.Value.Upper.Tail > p.pooling & !is.na(baci$P.Value.Upper.Tail) & is.na(baci$P.Value.Lower.Tail),"ns (Can be Eliminated)",
-                           "ns")))
+      baci$Significant<-ifelse(is.na(baci$P.Value.Upper.Tail), NA,
+                               ifelse(baci$P.Value.Upper.Tail <= (p.aav/2) |
+                                        (baci$P.Value.Lower.Tail <= (p.aav/2) & !is.na(baci$P.Value.Lower.Tail)), "*",
+                                      ifelse(baci$P.Value.Upper.Tail <= p.aav & is.na(baci$P.Value.Lower.Tail), "*",
+                                             ifelse(baci$P.Value.Upper.Tail > p.pooling & is.na(baci$P.Value.Lower.Tail),
+                                                    "ns (Can be Eliminated)", "ns"))))
 
 #      baci$Significant<-ifelse(baci$P.Value.Upper.Tail <= p.aav & !is.na(baci$P.Value.Upper.Tail) |
 #                                 baci$P.Value.Lower.Tail <= p.aav & !is.na(baci$P.Value.Lower.Tail), "*",
@@ -2971,75 +2973,35 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
 
   ###------------------------------------------ Next.Step &  Interpretation
 
+  # Sites vs Times
   if(aav.model == "AEBGC") {
     AEBGC11<- c("11AEBGC.2030","11AEBGC.2031")
     AEBGC11n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "11AEBGC.2030"]),
                       is.na(baci$Post.Hoc.Pooling[baci$ID == "11AEBGC.2031"])) == F)
-
-    # Sites vs Times
     # T(P(B))xS(I) = ns
     if(baci$Significant[baci$ID == AEBGC11[AEBGC11n]] != "*") {
-      # T(P(B))xS(C) = ns; T(P(B))xS(I) = ns
+      # T(P(B))xS(I) = ns   T(P(B))xS(C) = ns;
       if(baci$Significant[baci$ID == "11AEBGC.2040"] != "*") {
         baci$Next.Step[baci$ID == AEBGC11[AEBGC11n]]<-baci$Next.Step[baci$ID == "11AEBGC.2040"]<- "Go to P(Aft)xS(C) and T(P(Aft))xC"
         baci$Interpretation[baci$ID == AEBGC11[AEBGC11n]]<-baci$Interpretation[baci$ID == "11AEBGC.2040"]<- "No short-term and small-scale interactions"
       }
-      # T(P(B))xS(C) = *; T(P(B))xS(I) = ns
+      # T(P(B))xS(I) = ns   T(P(B))xS(C) = *
       if(baci$Significant[baci$ID == "11AEBGC.2040"] == "*") {
-        baci$Next.Step[baci$ID == AEBGC11[AEBGC11n]]<-baci$Next.Step[baci$ID == "11AEBGC.2040"]<- "END"
+        baci$Next.Step[baci$ID == AEBGC11[AEBGC11n]]<-baci$Next.Step[baci$ID == "11AEBGC.2040"]<- "Go to P(Aft)xS(C) and T(P(Aft))xC"
         baci$Interpretation[baci$ID == AEBGC11[AEBGC11n]]<-baci$Interpretation[baci$ID == "11AEBGC.2040"]<- "Short-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
       }
     }
-
     # T(P(B))xS(I) = *
-    # T(P(B))xS(C) = ns; T(P(B))xS(I) = *   &       # T(P(B))xS(C) = *; T(P(B))xS(I) = ns
     if(baci$Significant[baci$ID == AEBGC11[AEBGC11n]] == "*") {
-        baci$Next.Step[baci$ID == AEBGC11[AEBGC11n]]<-baci$Next.Step[baci$ID == "11AEBGC.2040"]<- "Go to T(P(Bef))xS(I) (2-tail test)"
+      # T(P(B))xS(I) = *  AND  (T(P(B))xS(C) = ns OR  T(P(B))xS(C) = *)
+      baci$Next.Step[baci$ID == AEBGC11[AEBGC11n]]<-baci$Next.Step[baci$ID == "11AEBGC.2040"]<- "Go to T(P(Bef))xS(I) (2-tail test)"
         baci$Interpretation[baci$ID == AEBGC11[AEBGC11n]]<-baci$Interpretation[baci$ID == "11AEBGC.2040"]<- "Short-term and small-scale interactions"
         # 2-tail test
-        baci$Next.Step[baci$ID == "11AEBGC.1030"]<-baci$Next.Step[baci$ID == "11AEBGC.1040"]<- "END"
-        ifelse(baci$Significant[baci$ID == "11AEBGC.1030"] == "*" & baci$Significant[baci$ID =="11AEBGC.1040"] != "*",
+        baci$Next.Step[baci$ID == "11AEBGC.1030"]<-baci$Next.Step[baci$ID == "11AEBGC.1040"]<- "Go to P(Aft)xS(C) and T(P(Aft))xC"
+        ifelse((baci$Significant[baci$ID == "11AEBGC.1030"] == "*" & baci$Significant[baci$ID =="11AEBGC.1040"] != "*"),
                baci$Interpretation[baci$ID == "11AEBGC.1030"]<-baci$Interpretation[baci$ID == "11AEBGC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and small-scale: impact sites differs from before and after the disturbance occurs",
                baci$Interpretation[baci$ID == "11AEBGC.1030"]<-baci$Interpretation[baci$ID == "11AEBGC.1040"]<- "No short-term and small-scale impact detected: the changes are not associated with the disturbed sites")
-        #"Short-term IMPACT DETECTED: impact sites differs from before and after the disturbance occurs"
-        #"Short-term IMPACT DETECTED: control sites do not differs from before and after the disturbance"
-        #### Therefore effect is specific to the impacted sites and coincident with the start of the disturbance. IMPACT DETECTED. ###
       }
-
-#    # Sites vs Times
-#    # T(P(B))xS(C) = ns; T(P(B))xS(I) = ns
-#    if(baci$Significant[baci$ID == "11AEBGC.2040"] != "*") {
-#      if(baci$Significant[baci$ID == AEBGC11[AEBGC11n]] != "*") {
-#        baci$Next.Step[baci$ID == AEBGC11[AEBGC11n]]<-baci$Next.Step[baci$ID == "11AEBGC.2040"]<- "Go to P(Aft)xS(C) and T(P(Aft))xC"
-#        baci$Interpretation[baci$ID == AEBGC11[AEBGC11n]]<-baci$Interpretation[baci$ID == "11AEBGC.2040"]<- "No short-term and small-scale interactions"
-#      }
-#      # T(P(B))xS(C) = ns; T(P(B))xS(I) = *
-#      if(baci$Significant[baci$ID == AEBGC11[AEBGC11n]] == "*") {
-#        baci$Next.Step[baci$ID == AEBGC11[AEBGC11n]]<-baci$Next.Step[baci$ID == "11AEBGC.2040"]<- "Go to T(P(Bef))xS(I) (2-tail test)"
-#        baci$Interpretation[baci$ID == AEBGC11[AEBGC11n]]<-baci$Interpretation[baci$ID == "11AEBGC.2040"]<- "Short-term and small-scale interactions"
-#        # 2-tail test
-#        baci$Next.Step[baci$ID == "11AEBGC.1030"]<-baci$Next.Step[baci$ID == "11AEBGC.1040"]<- "END"
-#        ifelse(baci$Significant[baci$ID == "11AEBGC.1030"] == "*" & baci$Significant[baci$ID =="11AEBGC.1040"] != "*",
-#               baci$Interpretation[baci$ID == "11AEBGC.1030"]<-baci$Interpretation[baci$ID == "11AEBGC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and small-scale: impact sites differs from before and after the disturbance occurs",
-#               baci$Interpretation[baci$ID == "11AEBGC.1030"]<-baci$Interpretation[baci$ID == "11AEBGC.1040"]<- "No short-term and small-scale impact detected: the changes are not associated with the disturbed sites")
-#        #"Short-term IMPACT DETECTED: impact sites differs from before and after the disturbance occurs"
-#        #"Short-term IMPACT DETECTED: control sites do not differs from before and after the disturbance"
-#        #### Therefore effect is specific to the impacted sites and coincident with the start of the disturbance. IMPACT DETECTED. ###
-#      }
-#    }
-#    # T(P(B))xS(C) = *; T(P(B))xS(I) = ns
-#    if(baci$Significant[baci$ID == "11AEBGC.2040"] == "*") {
-#      if(baci$Significant[baci$ID == AEBGC11[AEBGC11n]] != "*") {
-#        baci$Next.Step[baci$ID == AEBGC11[AEBGC11n]]<-baci$Next.Step[baci$ID == "11AEBGC.2040"]<- "Go to P(Aft)xS(C) and T(P(Aft))xC"
-#        baci$Interpretation[baci$ID == AEBGC11[AEBGC11n]]<-baci$Interpretation[baci$ID == "11AEBGC.2040"]<- "Short-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
-#      }
-#      # T(P(B))xS(C) = *; T(P(B))xS(I) = *
-#      if(baci$Significant[baci$ID == AEBGC11[AEBGC11n]] == "*") {
-#        baci$Next.Step[baci$ID == AEBGC11[AEBGC11n]]<-baci$Next.Step[baci$ID == "11AEBGC.2040"]<- "Go to P(Aft)xS(C) and T(P(Aft))xC"
-#        baci$Interpretation[baci$ID == AEBGC11[AEBGC11n]]<-baci$Interpretation[baci$ID == "11AEBGC.2040"]<- "Short-term and small-scale interactions: widespread temporal trends are associated with both, control and disturbed sites"
-#      }
-#    }
-
 
     # Sites vs Periods P(B) x S(L)
     AEBG09.40<- c("09AEBG.2040","09AEBG.2041")
@@ -3051,125 +3013,33 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
                         is.na(baci$Post.Hoc.Pooling[baci$ID == "09AEBG.2032"])) == F)
 
     # P(B)xS(I) = ns
-    # P(B)xS(C) = ns; P(B)xS(I) = ns
     if(baci$Significant[baci$ID == AEBG09.30[AEBG09.30n]] != "*") {
-        if(baci$Significant[baci$ID == AEBG09.40[AEBG09.40n]] != "*") {
-          baci$Next.Step[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Next.Step[baci$ID == AEBG09.40[AEBG09.40n]]<- "Go to BxS(C) and P(Aft)xC"
+      # P(B)xS(I) = ns     P(B)xS(C) = ns
+      if(baci$Significant[baci$ID == AEBG09.40[AEBG09.40n]] != "*") {
+          baci$Next.Step[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Next.Step[baci$ID == AEBG09.40[AEBG09.40n]]<- "Go to BxS(C)"
         baci$Interpretation[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Interpretation[baci$ID == AEBG09.40[AEBG09.40n]]<- "No medium-term and small-scale interactions"
         }
-      # P(B)xS(C) = *; P(B)xS(I) = ns
+      # P(B)xS(I) = ns   P(B)xS(C) = *
         if(baci$Significant[baci$ID == AEBG09.40[AEBG09.40n]] == "*") {
-          baci$Next.Step[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Next.Step[baci$ID == AEBG09.40[AEBG09.40n]]<- "END"
+          baci$Next.Step[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Next.Step[baci$ID == AEBG09.40[AEBG09.40n]]<- "Go to BxS(C)"
           baci$Interpretation[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Interpretation[baci$ID == AEBG09.40[AEBG09.40n]]<- "Medium-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
         }
       }
       # P(B)xS(I) = *
-      # P(B)xS(C) = ns; P(B)xS(I) = *  &   P(B)xS(C) = *; P(B)xS(I) = *
       if(baci$Significant[baci$ID == AEBG09.30[AEBG09.30n]] == "*") {
+        # P(B)xS(I) = *   (P(B)xS(C) = ns OR  P(B)xS(C) = *)
         baci$Next.Step[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Next.Step[baci$ID == AEBG09.40[AEBG09.40n]]<- "Go to P(Bef)xS(I) (2-tail test)"
         baci$Interpretation[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Interpretation[baci$ID == AEBG09.40[AEBG09.40n]]<- "Medium-term and small-scale interactions"
         # 2-tail test
-        baci$Next.Step[baci$ID == "09AEBG.1030"]<-baci$Next.Step[baci$ID == "09AEBG.1040"]<- "END"
+        baci$Next.Step[baci$ID == "09AEBG.1030"]<-baci$Next.Step[baci$ID == "09AEBG.1040"]<- "Go to BxS(C)"
         ifelse(baci$Significant[baci$ID == "09AEBG.1030"] == "*" & baci$Significant[baci$ID =="09AEBG.1040"] != "*",
                baci$Interpretation[baci$ID == "09AEBG.1030"]<-baci$Interpretation[baci$ID == "09AEBG.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from medium-term and small-scale: impact sites differs from before and after the disturbance occurs",
                baci$Interpretation[baci$ID == "09AEBG.1030"]<-baci$Interpretation[baci$ID == "09AEBG.1040"]<- "No medium-term and small-scale impact detected: the changes are not associated with the disturbed location")
       }
-
-#    # P(B)xS(C) = ns; P(B)xS(I) = ns
-#    if(baci$Significant[baci$ID == AEBG09.40[AEBG09.40n]] != "*") {
-#      if(baci$Significant[baci$ID == AEBG09.30[AEBG09.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Next.Step[baci$ID == AEBG09.40[AEBG09.40n]]<- "Go to BxS(C) and P(Aft)xC"
-#        baci$Interpretation[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Interpretation[baci$ID == AEBG09.40[AEBG09.40n]]<- "No medium-term and small-scale interactions"
-#      }
-#      # P(B)xS(C) = ns; P(B)xS(I) = *
-#      if(baci$Significant[baci$ID == AEBG09.30[AEBG09.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Next.Step[baci$ID == AEBG09.40[AEBG09.40n]]<- "Go to P(B)xS(I) (2-tail test), BxS(C) and P(Aft)xC"
-#        baci$Interpretation[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Interpretation[baci$ID == AEBG09.40[AEBG09.40n]]<- "Medium-term and small-scale interactions"
-#        # 2-tail test
-#        baci$Next.Step[baci$ID == "09AEBG.1030"]<-baci$Next.Step[baci$ID == "09AEBG.1040"]<- "END"
-#        ifelse(baci$Significant[baci$ID == "09AEBG.1030"] == "*" & baci$Significant[baci$ID =="09AEBG.1040"] != "*",
-#               baci$Interpretation[baci$ID == "09AEBG.1030"]<-baci$Interpretation[baci$ID == "09AEBG.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from medium-term and small-scale: impact sites differs from before and after the disturbance occurs",
-#               baci$Interpretation[baci$ID == "09AEBG.1030"]<-baci$Interpretation[baci$ID == "09AEBG.1040"]<- "No medium-term and small-scale impact detected: the changes are not associated with the disturbed location")
-#      }
-#    }
-#    # P(B)xS(C) = *; P(B)xS(I) = ns
-#    if(baci$Significant[baci$ID == AEBG09.40[AEBG09.40n]] == "*") {
-#      if(baci$Significant[baci$ID == AEBG09.30[AEBG09.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Next.Step[baci$ID == AEBG09.40[AEBG09.40n]]<- "Go to BxS(C) and P(Aft)xC"
-#        baci$Interpretation[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Interpretation[baci$ID == AEBG09.40[AEBG09.40n]]<- "Medium-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
-#      }
-#      # P(B)xS(C) = *; P(B)xS(I) = *
-#      if(baci$Significant[baci$ID == AEBG09.30[AEBG09.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Next.Step[baci$ID == AEBG09.40[AEBG09.40n]]<- "Go to BxS(C) and P(Aft)xC"
-#        baci$Interpretation[baci$ID == AEBG09.30[AEBG09.30n]]<-baci$Interpretation[baci$ID == AEBG09.40[AEBG09.40n]]<- "Medium-term and small-scale interactions: widespread temporal trends are associated with both, control and disturbed sites"
-#      }
-#    }
-#  }
   }
 
-
-  ### Sites vs Before and after - B x S(L)
-  if(aav.model == "AEBGC" | aav.model == "AEGC") {
-    AEG07.40<- c("07AEG.0040","07AEG.0041")
-    AEG07.40n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0040"]),
-                       is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0041"])) == F)
-    AEG07.30<- c("07AEG.0030","07AEG.0031","07AEG.0032","07AEG.0033")
-    AEG07.30n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0030"]),
-                       is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0031"]),
-                       is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0032"]),
-                       is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0033"])) == F)
-
-    # BxS(I) = ns
-    # BxS(C) = ns; BxS(I) = ns
-    if(baci$Significant[baci$ID == AEG07.30[AEG07.30n]] != "*") {
-      if(baci$Significant[baci$ID == AEG07.40[AEG07.40n]] != "*") {
-        baci$Next.Step[baci$ID == AEG07.30[AEG07.30n]]<-baci$Next.Step[baci$ID == AEG07.40[AEG07.40n]]<- "Go to BxC"
-        baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "No long-term and small-scale interactions"
-      }
-      # BxS(C) = *; BxS(I) = ns
-      if(baci$Significant[baci$ID == AEG07.40[AEG07.40n]] == "*") {
-        baci$Next.Step[baci$ID == AEG07.30[AEG07.30n]]<-baci$Next.Step[baci$ID == AEG07.40[AEG07.40n]]<- "END"
-        baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "Long-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
-        }
-      }
-    # BxS(I) = *
-    # BxS(C) = ns; BxS(I) = *
-      if(baci$Significant[baci$ID == AEG07.30[AEG07.30n]] == "*") {
-        baci$Next.Step[baci$ID == AEG07.30[AEG07.30n]]<-baci$Next.Step[baci$ID == AEG07.40[AEG07.40n]]<- "END"
-        baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and small-scale: Disturbed sites differs from controls sites"
-      }
-
-#    # BxS(C) = ns; BxS(I) = ns
-#    if(baci$Significant[baci$ID == AEG07.40[AEG07.40n]] != "*") {
-#      if(baci$Significant[baci$ID == AEG07.30[AEG07.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEG07.30[AEG07.30n]]<-baci$Next.Step[baci$ID == AEG07.40[AEG07.40n]]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "No long-term and small-scale interactions"
-#      }
-#      # BxS(C) = ns; BxS(I) = *
-#      if(baci$Significant[baci$ID == AEG07.30[AEG07.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEG07.30[AEG07.30n]]<-baci$Next.Step[baci$ID == AEG07.40[AEG07.40n]]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and small-scale: Disturbed sites differs from controls sites"
-#      }
-#    }
-#    # BxS(C) = *; BxS(I) = ns
-#    if(baci$Significant[baci$ID == AEG07.40[AEG07.40n]] == "*") {
-#      if(baci$Significant[baci$ID == AEG07.30[AEG07.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEG07.30[AEG07.30n]]<-baci$Next.Step[baci$ID == AEG07.40[AEG07.40n]]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "Long-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
-#      }
-#      # BxS(C) = *; BxS(I) = *
-#      if(baci$Significant[baci$ID == AEG07.30[AEG07.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEG07.30[AEG07.30n]]<-baci$Next.Step[baci$ID == AEG07.40[AEG07.40n]]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "Long-term and small-scale interactions: widespread temporal trends are associated with both, control and disturbed sites"
-#      }
-#    }
-#  }
-  }
-
-
+  ### Location vs Period in Time - T(P(B)) x L
   if(aav.model == "AEBGC" | aav.model == "AEBC") {
-
-    ### Location vs Period in Time - T(P(B)) x L
     AEBC10.40<- c("10AEBC.2040","10AEBC.2041")
     AEBC10.40n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "10AEBC.2040"]),
                         is.na(baci$Post.Hoc.Pooling[baci$ID == "10AEBC.2041"])) == F)
@@ -3179,58 +3049,27 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
                         is.na(baci$Post.Hoc.Pooling[baci$ID == "10AEBC.2032"])) == F)
 
     # T(P(B))xI = ns
-    # T(P(B))xC = ns; T(P(B))xI = ns
       if(baci$Significant[baci$ID == AEBC10.30[AEBC10.30n]] != "*") {
+        # T(P(B))xI = ns T(P(B))xC = ns
         baci$Next.Step[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Next.Step[baci$ID == AEBC10.40[AEBC10.40n]]<- "Go to P(Aft)xC"
         baci$Interpretation[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Interpretation[baci$ID == AEBC10.40[AEBC10.40n]]<- "No short-term and local-scale interactions"
       }
-    # T(P(B))xC = *; T(P(B))xI = ns
+    # T(P(B))xI = ns  T(P(B))xC = *
     if(baci$Significant[baci$ID == AEBC10.40[AEBC10.40n]] == "*") {
-        baci$Next.Step[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Next.Step[baci$ID == AEBC10.40[AEBC10.40n]]<- "END"
+        baci$Next.Step[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Next.Step[baci$ID == AEBC10.40[AEBC10.40n]]<- "Go to P(Aft)xC"
         baci$Interpretation[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Interpretation[baci$ID == AEBC10.40[AEBC10.40n]]<- "Short-term and local-scale interactions: temporal trends are not associated with the disturbed location"
       }
     # T(P(B))xI = *
-    # T(P(B))xC = ns; T(P(B))xI = *
       if(baci$Significant[baci$ID == AEBC10.30[AEBC10.30n]] == "*") {
+        # T(P(B))xI = *  (T(P(B))xC = ns OR T(P(B))xC = *)
         baci$Next.Step[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Next.Step[baci$ID == AEBC10.40[AEBC10.40n]]<- "Go to T(P(Bef))xI (2-tail test)"
         baci$Interpretation[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Interpretation[baci$ID == AEBC10.40[AEBC10.40n]]<- "Short-term and local-scale interactions"
         # 2-tail test
-        baci$Next.Step[baci$ID == "10AEBC.1030"]<-baci$Next.Step[baci$ID == "10AEBC.1040"]<- "END"
+        baci$Next.Step[baci$ID == "10AEBC.1030"]<-baci$Next.Step[baci$ID == "10AEBC.1040"]<- "Go to P(Aft)xC"
         ifelse(baci$Significant[baci$ID == "10AEBC.1030"] == "*" & baci$Significant[baci$ID =="10AEBC.1040"] != "*",
                baci$Interpretation[baci$ID == "10AEBC.1030"]<-baci$Interpretation[baci$ID == "10AEBC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and local-scale: impact location differs from before and after the disturbance occurs",
                baci$Interpretation[baci$ID == "10AEBC.1030"]<-baci$Interpretation[baci$ID == "10AEBC.1040"]<- "No short-term and local-scale impact detected: the changes are not associated with the disturbed location")
       }
-
-#      # T(P(B))xC = ns; T(P(B))xI = ns
-#      if(baci$Significant[baci$ID == AEBC10.40[AEBC10.40n]] != "*") {
-#        if(baci$Significant[baci$ID == AEBC10.30[AEBC10.30n]] != "*") {
-#          baci$Next.Step[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Next.Step[baci$ID == AEBC10.40[AEBC10.40n]]<- "Go to P(Aft)xC"
-#          baci$Interpretation[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Interpretation[baci$ID == AEBC10.40[AEBC10.40n]]<- "No short-term and local-scale interactions"
-#        }
-#        # T(P(B))xC = ns; T(P(B))xI = *
-#        if(baci$Significant[baci$ID == AEBC10.30[AEBC10.30n]] == "*") {
-#          baci$Next.Step[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Next.Step[baci$ID == AEBC10.40[AEBC10.40n]]<- "Go to T(P(Bef))xI (2-tail test) and P(Aft)xC"
-#          baci$Interpretation[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Interpretation[baci$ID == AEBC10.40[AEBC10.40n]]<- "Short-term and local-scale interactions"
-#          # 2-tail test
-#          baci$Next.Step[baci$ID == "10AEBC.1030"]<-baci$Next.Step[baci$ID == "10AEBC.1040"]<- "END"
-#          ifelse(baci$Significant[baci$ID == "10AEBC.1030"] == "*" & baci$Significant[baci$ID =="10AEBC.1040"] != "*",
-#                 baci$Interpretation[baci$ID == "10AEBC.1030"]<-baci$Interpretation[baci$ID == "10AEBC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and local-scale: impact location differs from before and after the disturbance occurs",
-#                 baci$Interpretation[baci$ID == "10AEBC.1030"]<-baci$Interpretation[baci$ID == "10AEBC.1040"]<- "No short-term and local-scale impact detected: the changes are not associated with the disturbed location")
-#        }
-#      }
-#      # T(P(B))xC = *; T(P(B))xI = ns
-#      if(baci$Significant[baci$ID == AEBC10.40[AEBC10.40n]] == "*") {
-#        if(baci$Significant[baci$ID == AEBC10.30[AEBC10.30n]] != "*") {
-#          baci$Next.Step[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Next.Step[baci$ID == AEBC10.40[AEBC10.40n]]<- "Go to P(Aft)xC"
-#          baci$Interpretation[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Interpretation[baci$ID == AEBC10.40[AEBC10.40n]]<- "Short-term and local-scale interactions: temporal trends are not associated with the disturbed location"
-#        }
-#        # T(P(B))xC = *; T(P(B))xI = *
-#        if(baci$Significant[baci$ID == AEBC10.30[AEBC10.30n]] == "*") {
-#          baci$Next.Step[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Next.Step[baci$ID == AEBC10.40[AEBC10.40n]]<- "Go to P(Aft)xC"
-#          baci$Interpretation[baci$ID == AEBC10.30[AEBC10.30n]]<-baci$Interpretation[baci$ID == AEBC10.40[AEBC10.40n]]<- "Short-term and local-scale interactions: widespread temporal trends are associated with both, control and disturbed locations"
-#        }
-
-
 
     ### Location vs Period - P(B) x L
     AEB08.40<- c("08AEB.2040","08AEB.2041","08AEB.2042","08AEB.2043","08AEB.2044","08AEB.2045")
@@ -3248,65 +3087,127 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
                        is.na(baci$Post.Hoc.Pooling[baci$ID == "08AEB.2034"])) == F)
 
     # P(B)xI = ns
-    # P(B)xC = ns; P(B)xI = ns
     if(baci$Significant[baci$ID == AEB08.30[AEB08.30n]] != "*") {
+      # P(B)xI = ns  P(B)xC = ns
       if(baci$Significant[baci$ID == AEB08.40[AEB08.40n]] != "*") {
         baci$Next.Step[baci$ID == AEB08.30[AEB08.30n]]<-baci$Next.Step[baci$ID == AEB08.40[AEB08.40n]]<- "Go to BxC"
         baci$Interpretation[baci$ID == AEB08.30[AEB08.30n]]<-baci$Interpretation[baci$ID == AEB08.40[AEB08.40n]]<- "No medium-term and local-scale interactions"
       }
-      # P(B)xC = *; P(B)xI = ns
+      # P(B)xI = ns  P(B)xC = *
       if(baci$Significant[baci$ID == AEB08.40[AEB08.40n]] == "*") {
-          baci$Next.Step[baci$ID == AEB08.30[AEB08.30n]]<-baci$Next.Step[baci$ID == AEB08.40[AEB08.40n]]<- "END"
+          baci$Next.Step[baci$ID == AEB08.30[AEB08.30n]]<-baci$Next.Step[baci$ID == AEB08.40[AEB08.40n]]<- "Go to BxC"
           baci$Interpretation[baci$ID == AEB08.30[AEB08.30n]]<-baci$Interpretation[baci$ID == AEB08.40[AEB08.40n]]<- "Medium-term and local-scale interactions: temporal trends are not associated with the disturbed location"
       }
     }
-      # P(B)xC = ns; P(B)xI = *
+      # P(B)xI = *
       if(baci$Significant[baci$ID == AEB08.30[AEB08.30n]] == "*") {
+        # P(B)xI = * (P(B)xC = ns OR P(B)xC = *)
         baci$Next.Step[baci$ID == AEB08.30[AEB08.30n]]<-baci$Next.Step[baci$ID == AEB08.40[AEB08.40n]]<- "Go to P(Bef)xI (2-tail test)"
         baci$Interpretation[baci$ID == AEB08.30[AEB08.30n]]<-baci$Interpretation[baci$ID == AEB08.40[AEB08.40n]]<- "Medium-term and local-scale interactions"
         # 2-tail test
-        baci$Next.Step[baci$ID == "08AEB.1030"]<-baci$Next.Step[baci$ID == "08AEB.1040"]<- "END"
+        baci$Next.Step[baci$ID == "08AEB.1030"]<-baci$Next.Step[baci$ID == "08AEB.1040"]<- "Go to BxC"
         ifelse(baci$Significant[baci$ID == "08AEB.1030"] == "*" & baci$Significant[baci$ID =="08AEB.1040"] != "*",
                baci$Interpretation[baci$ID == "08AEB.1030"]<-baci$Interpretation[baci$ID == "08AEB.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from Medium-term and local-scale: impact location differs from before and after the disturbance occurs",
                baci$Interpretation[baci$ID == "08AEB.1030"]<-baci$Interpretation[baci$ID == "08AEB.1040"]<- "No medium-term and local-scale impact detected: the changes are not associated with the disturbed location")
       }
+  }
 
-#  # P(B)xC = ns; P(B)xI = ns
-#    if(baci$Significant[baci$ID == AEB08.40[AEB08.40n]] != "*") {
-#      if(baci$Significant[baci$ID == AEB08.30[AEB08.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEB08.30[AEB08.30n]]<-baci$Next.Step[baci$ID == AEB08.40[AEB08.40n]]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEB08.30[AEB08.30n]]<-baci$Interpretation[baci$ID == AEB08.40[AEB08.40n]]<- "No medium-term and local-scale interactions"
-#      }
-#      # P(B)xC = ns; P(B)xI = *
-#      if(baci$Significant[baci$ID == AEB08.30[AEB08.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEB08.30[AEB08.30n]]<-baci$Next.Step[baci$ID == AEB08.40[AEB08.40n]]<- "Go to P(Bef)xI (2-tail test) and BxC"
-#        baci$Interpretation[baci$ID == AEB08.30[AEB08.30n]]<-baci$Interpretation[baci$ID == AEB08.40[AEB08.40n]]<- "Medium-term and local-scale interactions"
-#        # 2-tail test
-#        baci$Next.Step[baci$ID == "08AEB.1030"]<-baci$Next.Step[baci$ID == "08AEB.1040"]<- "END"
-#        ifelse(baci$Significant[baci$ID == "08AEB.1030"] == "*" & baci$Significant[baci$ID =="08AEB.1040"] != "*",
-#               baci$Interpretation[baci$ID == "08AEB.1030"]<-baci$Interpretation[baci$ID == "08AEB.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from Medium-term and local-scale: impact location differs from before and after the disturbance occurs",
-#               baci$Interpretation[baci$ID == "08AEB.1030"]<-baci$Interpretation[baci$ID == "08AEB.1040"]<- "No medium-term and local-scale impact detected: the changes are not associated with the disturbed location")
-#      }
-#    }
-#    # P(B)xC = *; P(B)xI = ns
-#    if(baci$Significant[baci$ID == AEB08.40[AEB08.40n]] == "*") {
-#      if(baci$Significant[baci$ID == AEB08.30[AEB08.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEB08.30[AEB08.30n]]<-baci$Next.Step[baci$ID == AEB08.40[AEB08.40n]]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEB08.30[AEB08.30n]]<-baci$Interpretation[baci$ID == AEB08.40[AEB08.40n]]<- "Medium-term and local-scale interactions: temporal trends are not associated with the disturbed location"
-#      }
-#      # P(B)xC = *; P(B)xI = *
-#      if(baci$Significant[baci$ID == AEB08.30[AEB08.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEB08.30[AEB08.30n]]<-baci$Next.Step[baci$ID == AEB08.40[AEB08.40n]]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEB08.30[AEB08.30n]]<-baci$Interpretation[baci$ID == AEB08.40[AEB08.40n]]<- "Medium-term and local-scale interactions: widespread temporal trends are associated with both, control and disturbed locations"
-#      }
-#    }
+  # Location vc Time T(B) x L
+  if(aav.model == "AEC") {
+    AEC10.30<- c("10AEC.2030","10AEC.2031")
+    AEC10.30n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "10AEC.2030"]),
+                       is.na(baci$Post.Hoc.Pooling[baci$ID == "10AEC.2031"])) == F)
 
+    # T(B)xI = ns
+    if(baci$Significant[baci$ID == AEC10.30[AEC10.30n]] != "*") {
+      # T(B)xI = ns  T(B)xC = ns
+      if(baci$Significant[baci$ID == "10AEC.2040"] != "*") {
+        baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "Go to BxC"
+        baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "No short-term and local-scale interactions"
+      }
+      # T(B)xI = ns  T(B)xC = *
+      if(baci$Significant[baci$ID == "10AEC.2040"] == "*") {
+          baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "Go to BxC"
+          baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "Short-term and local-scale interactions: temporal trends are not associated with the disturbed location"
+      }
+    }
+      # T(B)xI = *
+      if(baci$Significant[baci$ID == AEC10.30[AEC10.30n]] == "*") {
+        # T(B)xI = *  (T(B)xC = ns OR T(B)xC = *)
+        baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "Go to T(Bef)xI (2-tail test)"
+        baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "Short-term and local-scale interactions"
+        # 2-tail test
+        baci$Next.Step[baci$ID == "10AEC.1030"]<-baci$Next.Step[baci$ID == "10AEC.1040"]<- "Go to BxC"
+        ifelse(baci$Significant[baci$ID == "10AEC.1030"] == "*" & baci$Significant[baci$ID =="10AEC.1040"] != "*",
+               baci$Interpretation[baci$ID == "10AEC.1030"]<-baci$Interpretation[baci$ID == "10AEC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and local-scale: impact location differs from before and after the disturbance occurs",
+               baci$Interpretation[baci$ID == "10AEC.1030"]<-baci$Interpretation[baci$ID == "10AEC.1040"]<- "No short-term and local-scale impact detected: the changes are not associated with the disturbed location")
+      }
+  }
+
+  # site vc Time T(B) x S(L)
+  if(aav.model == "AEGC") {
+    AEGC11.30<- c("11AEGC.2030","11AEGC.2031")
+    AEGC11.30n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "11AEGC.2030"]),
+                        is.na(baci$Post.Hoc.Pooling[baci$ID == "11AEGC.2031"])) == F)
+    # T(B)xS(I) = ns
+    if(baci$Significant[baci$ID == AEGC11.30[AEGC11.30n]] != "*") {
+      # T(B)xS(I) = ns  T(B)xS(C) = ns
+      if(baci$Significant[baci$ID == "11AEGC.2040"] != "*") {
+        baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "Go to BxS(C)"
+        baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "No short-term and small-scale interactions"
+      }
+      # T(B)xS(I) = ns  T(B)xS(C) = *
+      if(baci$Significant[baci$ID == "11AEGC.2040"] == "*") {
+          baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "Go to BxS(C)"
+          baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "Short-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
+      }
+    }
+    # T(B)xS(I) = *
+    if(baci$Significant[baci$ID == AEGC11.30[AEGC11.30n]] == "*") {
+      # T(B)xS(I) = *  (T(B)xS(C) = ns OR T(B)xS(C) = *)
+      baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "Go to T(Bef)xS(I) (2-tail test)"
+      baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "Short-term and small-scale interactions"
+      # 2-tail test
+      baci$Next.Step[baci$ID == "11AEGC.1030"]<-baci$Next.Step[baci$ID == "11AEGC.1040"]<- "Go to BxS(C)"
+      ifelse(baci$Significant[baci$ID == "11AEGC.1030"] == "*" & baci$Significant[baci$ID =="11AEGC.1040"] != "*",
+             baci$Interpretation[baci$ID == "11AEGC.1030"]<-baci$Interpretation[baci$ID == "11AEGC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and small-scale: impact sites differs from before and after the disturbance occurs",
+             baci$Interpretation[baci$ID == "11AEGC.1030"]<-baci$Interpretation[baci$ID == "11AEGC.1040"]<- "No short-term impact detected: the changes are not associated with the disturbed sites")
+    }
   }
 
 
-  if(aav.model == "AEBGC" | aav.model == "AEBC" | aav.model == "AEGC" | aav.model == "AEC") {
+  ### Sites vs Before and after - B x S(L)
+  if(aav.model == "AEBGC" | aav.model == "AEGC") {
+    AEG07.40<- c("07AEG.0040","07AEG.0041")
+    AEG07.40n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0040"]),
+                       is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0041"])) == F)
+    AEG07.30<- c("07AEG.0030","07AEG.0031","07AEG.0032","07AEG.0033")
+    AEG07.30n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0030"]),
+                       is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0031"]),
+                       is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0032"]),
+                       is.na(baci$Post.Hoc.Pooling[baci$ID == "07AEG.0033"])) == F)
+    baci$Next.Step[baci$ID == AEG07.30[AEG07.30n]]<-baci$Next.Step[baci$ID == AEG07.40[AEG07.40n]]<- "END: Site Group"
 
-    # Location vc Before and After B x L
+    # BxS(I) = ns
+    if(baci$Significant[baci$ID == AEG07.30[AEG07.30n]] != "*") {
+      # BxS(I) = ns   BxS(C) = ns
+      if(baci$Significant[baci$ID == AEG07.40[AEG07.40n]] != "*") {
+        baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "No long-term and small-scale interactions"
+      }
+      # BxS(I) = ns   BxS(C) = *
+      if(baci$Significant[baci$ID == AEG07.40[AEG07.40n]] == "*") {
+        baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "Long-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
+      }
+    }
+    # BxS(I) = * (BxS(C) = ns OR  BxS(C) = *)
+    if(baci$Significant[baci$ID == AEG07.30[AEG07.30n]] == "*") {
+      # BxS(I) = *   BxS(C) = ns
+      baci$Interpretation[baci$ID == AEG07.30[AEG07.30n]]<-baci$Interpretation[baci$ID == AEG07.40[AEG07.40n]]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and small-scale: Disturbed sites differs from controls sites"
+    }
+  }
+
+  # Location vc Before and After B x L
+  if(aav.model == "AEBGC" | aav.model == "AEBC" | aav.model == "AEGC" | aav.model == "AEC") {
     AE03.40<- c("03AE.0040","03AE.0041","03AE.0042","03AE.0043","03AE.0044","03AE.0045","03AE.0046","03AE.0047","03AE.0048","03AE.0049")
     AE03.40n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "03AE.0040"]),
                       is.na(baci$Post.Hoc.Pooling[baci$ID == "03AE.0041"]),
@@ -3327,191 +3228,29 @@ asym.baci <- function(data, n.ftemp, n.fspac, names.impact, names.before = NULL,
                       is.na(baci$Post.Hoc.Pooling[baci$ID == "03AE.0034"]),
                       is.na(baci$Post.Hoc.Pooling[baci$ID == "03AE.0035"]),
                       is.na(baci$Post.Hoc.Pooling[baci$ID == "03AE.0036"])) == F)
-
     # BxI = ns
-    # BxC = ns; BxI = ns
     if(baci$Significant[baci$ID == AE03.30[AE03.30n]] != "*") {
+      # BxI = ns  BxC = ns
       if(baci$Significant[baci$ID == AE03.40[AE03.40n]] != "*") {
-        baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END"
+        baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END: Location Group"
         baci$Interpretation[baci$ID == AE03.30[AE03.30n]]<-baci$Interpretation[baci$ID == AE03.40[AE03.40n]]<- "No long-term and local-scale interactions"
       }
-      # BxC = *; BxI = ns
+      # BxI = ns   BxC = *
       if(baci$Significant[baci$ID == AE03.40[AE03.40n]] == "*") {
-          baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END"
-          baci$Interpretation[baci$ID == AE03.30[AE03.30n]]<-baci$Interpretation[baci$ID == AE03.40[AE03.40n]]<- "Long-term and local-scale interactions: temporal trends are not associated with the disturbed location"
-        }
+        baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END: Location Group"
+        baci$Interpretation[baci$ID == AE03.30[AE03.30n]]<-baci$Interpretation[baci$ID == AE03.40[AE03.40n]]<- "Long-term and local-scale interactions: temporal trends are not associated with the disturbed location"
+      }
     }
     # BxI = *
-    # BxC = ns; BxI = *  &  BxC = *; BxI = *
     if(baci$Significant[baci$ID == AE03.30[AE03.30n]] == "*") {
-        baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END"
-        baci$Interpretation[baci$ID == AE03.30[AE03.30n]]<-baci$Interpretation[baci$ID == AE03.40[AE03.40n]]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and local-scale: Disturbed location differs from controls locations"
+      # BxI = *  (BxC = ns OR BxC = *)
+      baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END: Location Group"
+      baci$Interpretation[baci$ID == AE03.30[AE03.30n]]<-baci$Interpretation[baci$ID == AE03.40[AE03.40n]]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and local-scale: Disturbed location differs from controls locations"
     }
-
-#    # BxC = ns; BxI = ns
-#    if(baci$Significant[baci$ID == AE03.40[AE03.40n]] != "*") {
-#      if(baci$Significant[baci$ID == AE03.30[AE03.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END"
-#        baci$Interpretation[baci$ID == AE03.30[AE03.30n]]<-baci$Interpretation[baci$ID == AE03.40[AE03.40n]]<- "No long-term and local-scale interactions"
-#      }
-#      # BxC = ns; BxI = *
-#      if(baci$Significant[baci$ID == AE03.30[AE03.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END"
-#        baci$Interpretation[baci$ID == AE03.30[AE03.30n]]<-baci$Interpretation[baci$ID == AE03.40[AE03.40n]]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and local-scale: Disturbed location differs from controls locations"
-#      }
-#    }
-#    # BxC = *; BxI = ns
-#    if(baci$Significant[baci$ID == AE03.40[AE03.40n]] == "*") {
-#      if(baci$Significant[baci$ID == AE03.30[AE03.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END"
-#        baci$Interpretation[baci$ID == AE03.30[AE03.30n]]<-baci$Interpretation[baci$ID == AE03.40[AE03.40n]]<- "Long-term and local-scale interactions: temporal trends are not associated with the disturbed location"
-#      }
-#      # BxC = *; BxI = *
-#      if(baci$Significant[baci$ID == AE03.30[AE03.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AE03.30[AE03.30n]]<-baci$Next.Step[baci$ID == AE03.40[AE03.40n]]<- "END"
-#        baci$Interpretation[baci$ID == AE03.30[AE03.30n]]<-baci$Interpretation[baci$ID == AE03.40[AE03.40n]]<- "Long-term and local-scale interactions: widespread temporal trends are associated with both, control and disturbed locations"
-#      }
-#    }
-  }
-
-
-
-  if(aav.model == "AEC") {
-
-    # Location vc Time T(B) x L
-    AEC10.30<- c("10AEC.2030","10AEC.2031")
-    AEC10.30n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "10AEC.2030"]),
-                       is.na(baci$Post.Hoc.Pooling[baci$ID == "10AEC.2031"])) == F)
-
-    # T(B)xI = ns
-    # T(B)xC = ns; T(B)xI = ns
-    if(baci$Significant[baci$ID == AEC10.30[AEC10.30n]] != "*") {
-      if(baci$Significant[baci$ID == "10AEC.2040"] != "*") {
-        baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "Go to BxC"
-        baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "No short-term and local-scale interactions"
-      }
-      # T(B)xC = *; T(B)xI = ns
-      if(baci$Significant[baci$ID == "10AEC.2040"] == "*") {
-          baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "END"
-          baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "Short-term and local-scale interactions: temporal trends are not associated with the disturbed location"
-      }
-    }
-      # T(B)xI = *
-      # T(B)xC = ns; T(B)xI = *  &  T(B)xC = *; T(B)xI = *
-      if(baci$Significant[baci$ID == AEC10.30[AEC10.30n]] == "*") {
-        baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "Go to T(Bef)xI (2-tail test)"
-        baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "Short-term and local-scale interactions"
-        # 2-tail test
-        baci$Next.Step[baci$ID == "10AEC.1030"]<-baci$Next.Step[baci$ID == "10AEC.1040"]<- "END"
-        ifelse(baci$Significant[baci$ID == "10AEC.1030"] == "*" & baci$Significant[baci$ID =="10AEC.1040"] != "*",
-               baci$Interpretation[baci$ID == "10AEC.1030"]<-baci$Interpretation[baci$ID == "10AEC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and local-scale: impact location differs from before and after the disturbance occurs",
-               baci$Interpretation[baci$ID == "10AEC.1030"]<-baci$Interpretation[baci$ID == "10AEC.1040"]<- "No short-term and local-scale impact detected: the changes are not associated with the disturbed location")
-        #"Short-term IMPACT DETECTED: impact sites differs from before and after the disturbance occurs"
-        #"Short-term IMPACT DETECTED: control sites do not differs from before and after the disturbance"
-        #### Therefore effect is specific to the impacted sites and coincident with the start of the disturbance. IMPACT DETECTED. ###
-      }
-
-#    # T(B)xC = ns; T(B)xI = ns
-#    if(baci$Significant[baci$ID == "10AEC.2040"] != "*") {
-#      if(baci$Significant[baci$ID == AEC10.30[AEC10.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "No short-term and local-scale interactions"
-#      }
-#      # T(B)xC = ns; T(B)xI = *
-#      if(baci$Significant[baci$ID == AEC10.30[AEC10.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "Go to T(Bef)xI (2-tail test) and BxC"
-#        baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "Short-term and local-scale interactions"
-#        # 2-tail test
-#        baci$Next.Step[baci$ID == "10AEC.1030"]<-baci$Next.Step[baci$ID == "10AEC.1040"]<- "END"
-#        ifelse(baci$Significant[baci$ID == "10AEC.1030"] == "*" & baci$Significant[baci$ID =="10AEC.1040"] != "*",
-#               baci$Interpretation[baci$ID == "10AEC.1030"]<-baci$Interpretation[baci$ID == "10AEC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and local-scale: impact location differs from before and after the disturbance occurs",
-#               baci$Interpretation[baci$ID == "10AEC.1030"]<-baci$Interpretation[baci$ID == "10AEC.1040"]<- "No short-term and local-scale impact detected: the changes are not associated with the disturbed location")
-#        #"Short-term IMPACT DETECTED: impact sites differs from before and after the disturbance occurs"
-#        #"Short-term IMPACT DETECTED: control sites do not differs from before and after the disturbance"
-#        #### Therefore effect is specific to the impacted sites and coincident with the start of the disturbance. IMPACT DETECTED. ###
-#      }
-#    }
-#    # T(B)xC = *; T(B)xI = ns
-#    if(baci$Significant[baci$ID == "10AEC.2040"] == "*") {
-#      if(baci$Significant[baci$ID == AEC10.30[AEC10.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "Short-term and local-scale interactions: temporal trends are not associated with the disturbed location"
-#      }
-#      # T(B)xC = *; T(B)xI = *
-#      if(baci$Significant[baci$ID == AEC10.30[AEC10.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEC10.30[AEC10.30n]]<-baci$Next.Step[baci$ID == "10AEC.2040"]<- "Go to BxC"
-#        baci$Interpretation[baci$ID == AEC10.30[AEC10.30n]]<-baci$Interpretation[baci$ID == "10AEC.2040"]<- "Short-term and local-scale interactions: widespread temporal trends are associated with both, control and disturbed locations"
-#      }
-#    }
-  }
-
-
-  if(aav.model == "AEGC") {
-
-    # site vc Time T(B) x S(L)
-    AEGC11.30<- c("11AEGC.2030","11AEGC.2031")
-    AEGC11.30n<-which(c(is.na(baci$Post.Hoc.Pooling[baci$ID == "11AEGC.2030"]),
-                        is.na(baci$Post.Hoc.Pooling[baci$ID == "11AEGC.2031"])) == F)
-
-    # T(B)xS(I) = ns
-    # T(B)xS(C) = ns; T(B)xS(I) = ns
-    if(baci$Significant[baci$ID == AEGC11.30[AEGC11.30n]] != "*") {
-      if(baci$Significant[baci$ID == "11AEGC.2040"] != "*") {
-        baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "Go to BxS(C) and T(Aft)xC"
-        baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "No short-term and small-scale interactions"
-      }
-      # T(B)xS(C) = *; T(B)xS(I() = ns
-      if(baci$Significant[baci$ID == "11AEGC.2040"] == "*") {
-          baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "END"
-          baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "Short-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
-      }
-    }
-    # T(B)xS(I) = *
-    # T(B)xS(C) = ns; T(B)xS(I) = *
-    if(baci$Significant[baci$ID == AEGC11.30[AEGC11.30n]] == "*") {
-      baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "Go to T(B)xS(I) (2-tail test)"
-      baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "Short-term and small-scale interactions"
-      # 2-tail test
-      baci$Next.Step[baci$ID == "11AEGC.1030"]<-baci$Next.Step[baci$ID == "11AEGC.1040"]<- "END"
-      ifelse(baci$Significant[baci$ID == "11AEGC.1030"] == "*" & baci$Significant[baci$ID =="11AEGC.1040"] != "*",
-             baci$Interpretation[baci$ID == "11AEGC.1030"]<-baci$Interpretation[baci$ID == "11AEGC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and small-scale: impact sites differs from before and after the disturbance occurs",
-             baci$Interpretation[baci$ID == "11AEGC.1030"]<-baci$Interpretation[baci$ID == "11AEGC.1040"]<- "No short-term impact detected: the changes are not associated with the disturbed sites")
-    }
-
-#    # T(B)xS(C) = ns; T(B)xS(I) = ns
-#    if(baci$Significant[baci$ID == "11AEGC.2040"] != "*") {
-#      if(baci$Significant[baci$ID == AEGC11.30[AEGC11.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "Go to BxS(C) and T(Aft)xC"
-#        baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "No short-term and small-scale interactions"
-#      }
-#      # T(B)xS(C) = ns; T(B)xS(I) = *
-#      if(baci$Significant[baci$ID == AEGC11.30[AEGC11.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "Go to T(B)xS(I) (2-tail test), BxS(C) and T(Aft)xC"
-#        baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "Short-term and small-scale interactions"
-#        # 2-tail test
-#        baci$Next.Step[baci$ID == "11AEGC.1030"]<-baci$Next.Step[baci$ID == "11AEGC.1040"]<- "END"
-#        ifelse(baci$Significant[baci$ID == "11AEGC.1030"] == "*" & baci$Significant[baci$ID =="11AEGC.1040"] != "*",
-#               baci$Interpretation[baci$ID == "11AEGC.1030"]<-baci$Interpretation[baci$ID == "11AEGC.1040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and small-scale: impact sites differs from before and after the disturbance occurs",
-#               baci$Interpretation[baci$ID == "11AEGC.1030"]<-baci$Interpretation[baci$ID == "11AEGC.1040"]<- "No short-term impact detected: the changes are not associated with the disturbed sites")
-#      }
-#    }
-#    # T(B)xS(C) = *; T(B)xS(I() = ns
-#    if(baci$Significant[baci$ID == "11AEGC.2040"] == "*") {
-#      if(baci$Significant[baci$ID == AEGC11.30[AEGC11.30n]] != "*") {
-#        baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "Go to BxS(C) and T(Aft)xC"
-#        baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "Short-term and small-scale interactions: temporal trends are not associated with the disturbed sites"
-#      }
-#      # T(B)xS(C) = *; T(B)xS(I) = *
-#      if(baci$Significant[baci$ID == AEGC11.30[AEGC11.30n]] == "*") {
-#        baci$Next.Step[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Next.Step[baci$ID == "11AEGC.2040"]<- "Go to BxS(C) and T(Aft)xC"
-#        baci$Interpretation[baci$ID == AEGC11.30[AEGC11.30n]]<-baci$Interpretation[baci$ID == "11AEGC.2040"]<- "Short-term and small-scale interactions: widespread temporal trends are associated with both, control and disturbed sites"
-#      }
-#    }
   }
 
 
   ###---------------------------------------------------------------  Final.Table
-
 
 #  baci$Final.Table<-ifelse(is.na(baci$P.Value.Upper.Tail) == T, "Yes",
 #                           ifelse(!is.na(baci$Post.Hoc.Pooling) == T, "Yes",

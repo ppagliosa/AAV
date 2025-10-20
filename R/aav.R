@@ -257,9 +257,7 @@ aav<- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.before = 
       asym.anova_final[[i]]<-asym.anova_final[[i]][,names(asym.anova_final[[i]]) %in% c(
         "Source.of.Variation","Df","Sum.Sq","Mean.Sq","F.Value",
         "P.Value.Upper.Tail","P.Value.Lower.Tail","Next.Step", "Interpretation")]
-      if(all(is.na(asym.anova_final[[i]]$P.Value.Lower.Tail))) {
-        asym.anova_final[[i]]<-asym.anova_final[[i]][,!names(asym.anova_final[[i]]) %in% c("P.Value.Lower.Tail")]
-      }
+      if(aci.tailed.test == 1) asym.anova_final[[i]]$P.Value.Lower.Tail<-NULL
     }
 
     if(aav.design == "baci") {

@@ -1841,23 +1841,25 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
   ## The F-ratio for some terms of the aav.models BEGC, CEG, DEG
   ## should be made by pooling procedures. Otherwise there is no test!
 
-  # agora considerando P/2 para os casos de 2-tail
-  if(pooling != T | (pooling == T & p.aav < p.pooling)) {
-    # se um deles for menor que p.aav; se um deles for menor que p.pooling; todos os outros/ todos maior que p.pooling
-    aci$Significant<-ifelse(aci$P.Value.Upper.Tail <= (p.aav/2) & !is.na(aci$P.Value.Upper.Tail) |
-             aci$P.Value.Lower.Tail <= (p.aav/2) & !is.na(aci$P.Value.Lower.Tail), "*",
-           ifelse(aci$P.Value.Upper.Tail <= (p.pooling/2) & !is.na(aci$P.Value.Upper.Tail) |
-                    aci$P.Value.Lower.Tail <= (p.pooling/2) & !is.na(aci$P.Value.Lower.Tail), "ns",
-                  "ns (Can be Eliminated)"))
-  }
-  if(pooling == T) {
-    if(p.aav > p.pooling)   stop("p.aav must be equal or less than p.pooling", "\n")
-    if(p.aav == p.pooling) {
-      aci$Significant<-ifelse(aci$P.Value.Upper.Tail <= (p.aav/2) & !is.na(aci$P.Value.Upper.Tail) |
-               aci$P.Value.Lower.Tail <= (p.aav/2) & !is.na(aci$P.Value.Lower.Tail), "*",
-             "ns (Can be Eliminated)")
+    # agora considerando P/2 para os casos de 2-tail
+    if(pooling != T | (pooling == T & p.aav < p.pooling)) {
+        # se um deles for menor que p.aav; se um deles for menor que p.pooling; todos os outros/ todos maior que p.pooling
+        aci$Significant<-ifelse(is.na(aci$P.Value.Upper.Tail), NA,
+                                ifelse(aci$P.Value.Upper.Tail <= (p.aav/2) |
+                                         (aci$P.Value.Lower.Tail <= (p.aav/2) & !is.na(aci$P.Value.Lower.Tail)), "*",
+                                       ifelse(aci$P.Value.Upper.Tail <= (p.pooling/2) |
+                                         (aci$P.Value.Lower.Tail <= (p.pooling/2) & !is.na(aci$P.Value.Lower.Tail)), "ns",
+                                       "ns (Can be Eliminated)")))
     }
-  }
+    if(pooling == T) {
+      if(p.aav > p.pooling)   stop("p.aav must be equal or less than p.pooling", "\n")
+      if(p.aav == p.pooling) {
+          aci$Significant<-ifelse(is.na(aci$P.Value.Upper.Tail), NA,
+                                  ifelse(aci$P.Value.Upper.Tail <= (p.aav/2) |
+                                    (aci$P.Value.Lower.Tail <= (p.aav/2) & !is.na(aci$P.Value.Lower.Tail)), "*",
+                                  "ns (Can be Eliminated)"))
+      }
+    }
 
 
   ###------------------------------------------------------------ Post.Hoc.Pooling
@@ -2378,15 +2380,17 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
 
       if(pooling != T | (pooling == T & p.aav < p.pooling)) {
         # se um deles for menor que p.aav; se um deles for menor que p.pooling; todos os outros/ todos maior que p.pooling
-        aci$Significant<-ifelse(aci$P.Value.Upper.Tail <= p.aav & !is.na(aci$P.Value.Upper.Tail), "*",
-                                ifelse(aci$P.Value.Upper.Tail <= p.pooling & !is.na(aci$P.Value.Upper.Tail), "ns",
-                                       "ns (Can be Eliminated)"))
+          aci$Significant<-ifelse(is.na(aci$P.Value.Upper.Tail), NA,
+                                  ifelse(aci$P.Value.Upper.Tail <= p.aav, "*",
+                                ifelse(aci$P.Value.Upper.Tail <= p.pooling, "ns",
+                                       "ns (Can be Eliminated)")))
       }
       if(pooling == T) {
         if(p.aav > p.pooling)   stop("p.aav must be equal or less than p.pooling", "\n")
         if(p.aav == p.pooling) {
-          aci$Significant<-ifelse(aci$P.Value.Upper.Tail <= p.aav & !is.na(aci$P.Value.Upper.Tail), "*",
-                                  "ns (Can be Eliminated)")
+          aci$Significant<-ifelse(is.na(aci$P.Value.Upper.Tail), NA,
+                                  ifelse(aci$P.Value.Upper.Tail <= p.aav, "*",
+                                  "ns (Can be Eliminated)"))
         }
       }
 
@@ -3048,29 +3052,23 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     BEGC11<- c("11BEGC.0030","11BEGC.0031")
     BEGC11n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "11BEGC.0030"]),
                      is.na(aci$Post.Hoc.Pooling[aci$ID == "11BEGC.0031"])) == F)
+    aci$Next.Step[aci$ID == BEGC11[BEGC11n]]<-aci$Next.Step[aci$ID == "11BEGC.0040"]<- "Go to PxS(C) and T(P)xC"
+
     # T(P)xS(C) = ns; T(P)xS(I) = ns
     if(aci$Significant[aci$ID == "11BEGC.0040"] != "*") {
-      if(aci$Significant[aci$ID == BEGC11[BEGC11n]] != "*") {
-        aci$Next.Step[aci$ID == BEGC11[BEGC11n]]<-aci$Next.Step[aci$ID == "11BEGC.0040"]<- "Go to PxS(C) and T(P)xC"
+      if(aci$Significant[aci$ID == BEGC11[BEGC11n]] != "*")
         aci$Interpretation[aci$ID == BEGC11[BEGC11n]]<-aci$Interpretation[aci$ID == "11BEGC.0040"]<- "No short-term and small-scale interactions"
-      }
       # T(P)xS(C) = ns; T(P)xS(I) = *
-      if(aci$Significant[aci$ID == BEGC11[BEGC11n]] == "*") {
-        aci$Next.Step[aci$ID == BEGC11[BEGC11n]]<-aci$Next.Step[aci$ID == "11BEGC.0040"]<- "Go to PxS(C) and T(P)xC"
+      if(aci$Significant[aci$ID == BEGC11[BEGC11n]] == "*")
         aci$Interpretation[aci$ID == BEGC11[BEGC11n]]<-aci$Interpretation[aci$ID == "11BEGC.0040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and small-scale: temporal trends in impact sites differs from controls"
-      }
     }
     # T(P)xS(C) = *; T(P)xS(I) = ns
     if(aci$Significant[aci$ID == "11BEGC.0040"] == "*") {
-      if(aci$Significant[aci$ID == BEGC11[BEGC11n]] != "*") {
-        aci$Next.Step[aci$ID == BEGC11[BEGC11n]]<-aci$Next.Step[aci$ID == "11BEGC.0040"]<- "Go to PxS(C) and T(P)xC"
+      if(aci$Significant[aci$ID == BEGC11[BEGC11n]] != "*")
         aci$Interpretation[aci$ID == BEGC11[BEGC11n]]<-aci$Interpretation[aci$ID == "11BEGC.0040"]<- "Short-term and small-scale interactions: temporal trends are not associated with impact sites"
-      }
       # T(P)xS(C) = *; T(P)xS(I) = *
-      if(aci$Significant[aci$ID == BEGC11[BEGC11n]] == "*") {
-        aci$Next.Step[aci$ID == BEGC11[BEGC11n]]<-aci$Next.Step[aci$ID == "11BEGC.0040"]<- "Go to PxS(C) and T(P)xC"
+      if(aci$Significant[aci$ID == BEGC11[BEGC11n]] == "*")
         aci$Interpretation[aci$ID == BEGC11[BEGC11n]]<-aci$Interpretation[aci$ID == "11BEGC.0040"]<- "CAUTION - to many variability to detec a impact from short-term and small-scale: temporal trends in impact sites differs from controls"
-      }
     }
 
     ### Sites vs Periods - PxS(L)
@@ -3078,65 +3076,27 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     BEG09n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "09BEG.0030"]),
                     is.na(aci$Post.Hoc.Pooling[aci$ID == "09BEG.0031"]),
                     is.na(aci$Post.Hoc.Pooling[aci$ID == "09BEG.0032"])) == F)
+    aci$Next.Step[aci$ID == BEG09[BEG09n]]<-aci$Next.Step[aci$ID == "09BEG.0040"]<- "END: Site Group"
 
     # PxS(C) = ns; PxS(I) = ns
     if(aci$Significant[aci$ID == "09BEG.0040"] != "*") {
-      ### se PxS(c), PxS(I), T(P)xS(C) E T(P)xS(I) = ns
-      if((aci$Significant[aci$ID == BEG09[BEG09n]] != "*") & (aci$Significant[aci$ID == "11BEGC.0040"] != "*") & (aci$Significant[aci$ID == BEGC11[BEGC11n]] != "*")) {
-        aci$Next.Step[aci$ID == BEG09[BEG09n]]<-aci$Next.Step[aci$ID == "09BEG.0040"]<- "Go to S(C) and PxC"
+      if(aci$Significant[aci$ID == BEG09[BEG09n]] != "*") {
         aci$Interpretation[aci$ID == BEG09[BEG09n]]<-aci$Interpretation[aci$ID == "09BEG.0040"]<-"No Medium-term and small-scale interactions"
+        ### if PxS(c), PxS(I), T(P)xS(C) E T(P)xS(I) = ns go to s(c); if not, end
+        if(aci$Significant[aci$ID == "11BEGC.0040"] != "*" & aci$Significant[aci$ID == BEGC11[BEGC11n]] != "*")
+          aci$Next.Step[aci$ID == BEG09[BEG09n]]<-aci$Next.Step[aci$ID == "09BEG.0040"]<- "Go to S(C)"
       }
       # PxS(C) = ns; PxS(I) = *
-      if(aci$Significant[aci$ID == BEG09[BEG09n]] == "*") {
-        aci$Next.Step[aci$ID == BEG09[BEG09n]]<-aci$Next.Step[aci$ID == "09BEG.0040"]<- "Go to PxC"
+      if(aci$Significant[aci$ID == BEG09[BEG09n]] == "*")
         aci$Interpretation[aci$ID == BEG09[BEG09n]]<-aci$Interpretation[aci$ID == "09BEG.0040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from medium-term and small-scale: temporal trends in impact sites differs from controls"
-      }
     }
     # PxS(C) = *; PxS(I) = ns
     if(aci$Significant[aci$ID == "09BEG.0040"] == "*") {
-      if(aci$Significant[aci$ID == BEG09[BEG09n]] != "*") {
-        aci$Next.Step[aci$ID == BEG09[BEG09n]]<-aci$Next.Step[aci$ID == "09BEG.0040"]<- "Go to PxC"
+      if(aci$Significant[aci$ID == BEG09[BEG09n]] != "*")
         aci$Interpretation[aci$ID == BEG09[BEG09n]]<-aci$Interpretation[aci$ID == "09BEG.0040"]<-"Medium-term and small-scale interactions: temporal trends are not associated with impact sites"
-      }
       # PxS(C) = *; PxS(I) = *
-      if(aci$Significant[aci$ID == BEG09[BEG09n]] == "*") {
-        aci$Next.Step[aci$ID == BEG09[BEG09n]]<-aci$Next.Step[aci$ID == "09BEG.0040"]<- "Go to PxC"
+      if(aci$Significant[aci$ID == BEG09[BEG09n]] == "*")
         aci$Interpretation[aci$ID == BEG09[BEG09n]]<-aci$Interpretation[aci$ID == "09BEG.0040"]<- "CAUTION - to many variability to detec a impact from medium-term and small-scale: temporal trends in impact sites differs from controls"
-      }
-    }
-  }
-
-  ### Sites - S(L)
-  if(aav.model == "BEGC" | aav.model == "CEG") {
-    EG05<- c("05EG.0030","05EG.0031","05EG.0032","05EG.0033")
-    EG05n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0030"]),
-                   is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0031"]),
-                   is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0032"]),
-                   is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0033"])) == F)
-
-    # S(C) = ns; S(I) = ns
-    if(aci$Significant[aci$ID == "05EG.0040"] != "*") {
-      if(aci$Significant[aci$ID == EG05[EG05n]] != "*") {
-        aci$Next.Step[aci$ID == EG05[EG05n]]<-aci$Next.Step[aci$ID == "05EG.0040"]<- "Go to C"
-        aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- "No long-term and small-scale differences among control and impact sites"
-      }
-      # S(C) = ns; S(I) = *
-      if(aci$Significant[aci$ID == EG05[EG05n]] == "*") {
-        aci$Next.Step[aci$ID == EG05[EG05n]]<-aci$Next.Step[aci$ID == "05EG.0040"]<- "Go to C"
-        aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and small-scale: impact sites differs from controls"
-      }
-    }
-    # S(C) = *; S(I) = ns
-    if(aci$Significant[aci$ID == "05EG.0040"] == "*") {
-      if(aci$Significant[aci$ID == EG05[EG05n]] != "*") {
-        aci$Next.Step[aci$ID == EG05[EG05n]]<-aci$Next.Step[aci$ID == "05EG.0040"]<- "Go to C"
-        aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- "Long-term and small-scale differences: spatial trends are not associated with impact sites"
-      }
-      # S(C) = *; S(I) = *
-      if(aci$Significant[aci$ID == EG05[EG05n]] == "*") {
-        aci$Next.Step[aci$ID == EG05[EG05n]]<-aci$Next.Step[aci$ID == "05EG.0040"]<- "Go to C"
-        aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- "CAUTION - to many variability to detec a impact from long-term and small-scale: impact sites differs from controls"
-      }
     }
   }
 
@@ -3147,81 +3107,30 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     BEC10n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "10BEC.0030"]),
                     is.na(aci$Post.Hoc.Pooling[aci$ID == "10BEC.0031"]),
                     is.na(aci$Post.Hoc.Pooling[aci$ID == "10BEC.0032"])) == F)
+    aci$Next.Step[aci$ID == BEC10[BEC10n]]<-aci$Next.Step[aci$ID == "10BEC.0040"]<- "Go to PxC"
 
     # T(P)xC = ns; T(P)xI = ns
     if(aci$Significant[aci$ID == "10BEC.0040"] != "*") {
       if(aci$Significant[aci$ID == BEC10[BEC10n]] != "*") {
-        aci$Next.Step[aci$ID == BEC10[BEC10n]]<-aci$Next.Step[aci$ID == "10BEC.0040"]<- "Go to PxC"
         aci$Interpretation[aci$ID == BEC10[BEC10n]]<-aci$Interpretation[aci$ID == "10BEC.0040"]<- "No short-term and local-scale interactions"
       }
       # T(P)xC = ns; T(P)xI = *
       if(aci$Significant[aci$ID == BEC10[BEC10n]] == "*") {
-        aci$Next.Step[aci$ID == BEC10[BEC10n]]<-aci$Next.Step[aci$ID == "10BEC.0040"]<- "Go to PxC"
         aci$Interpretation[aci$ID == BEC10[BEC10n]]<-aci$Interpretation[aci$ID == "10BEC.0040"]<- "PRESS DISTURBANCE - IMPACT DETECTED from short-term and local-scale: temporal trends in impact location differs from controls"
       }
     }
     # T(P)xC = *; T(P)xI = ns
     if(aci$Significant[aci$ID == "10BEC.0040"] == "*") {
       if(aci$Significant[aci$ID == BEC10[BEC10n]] != "*") {
-        aci$Next.Step[aci$ID == BEC10[BEC10n]]<-aci$Next.Step[aci$ID == "10BEC.0040"]<- "Go to PxC"
         aci$Interpretation[aci$ID == BEC10[BEC10n]]<-aci$Interpretation[aci$ID == "10BEC.0040"]<- "Short-term and local-scale interactions: temporal trends are not associated with impact location"
       }
       # T(P)xC = *; T(P)xI = *
       if(aci$Significant[aci$ID == BEC10[BEC10n]] == "*") {
-        aci$Next.Step[aci$ID == BEC10[BEC10n]]<-aci$Next.Step[aci$ID == "10BEC.0040"]<- "Go to PxC"
         aci$Interpretation[aci$ID == BEC10[BEC10n]]<-aci$Interpretation[aci$ID == "10BEC.0040"]<- "CAUTION - to many variability to detec a impact: temporal trends in impact location differs from controls"
       }
     }
-  }
-
-
-    # Location vs Periods - P x L
-  if(aav.model == "BEGC") {
-    BE03.40<- c("03BE.0040","03BE.0041","03BE.0042")
-    BE03.40n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0040"]),
-                      is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0041"]),
-                      is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0042"])) == F)
-
-    BE03<- c("03BE.0030","03BE.0031","03BE.0032","03BE.0033","03BE.0034")
-    BE03n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0030"]),
-                   is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0031"]),
-                   is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0032"]),
-                   is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0033"]),
-                   is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0034"])) == F)
-
-    # PxC = ns; PxI = ns
-    if(aci$Significant[aci$ID == BE03.40[BE03.40n]] != "*") {
-      ### se PxC, PxI, T(P)xC, T(P)xI, PxS(c), PxS(I), T(P)xS(C) E T(P)xS(I) = ns
-      if((aci$Significant[aci$ID == BE03[BE03n]] != "*") &
-         (aci$Significant[aci$ID == "10BEC.0040"] != "*") & (aci$Significant[aci$ID == BEC10[BEC10n]] != "*") &
-         (aci$Significant[aci$ID == "09BEG.0040"] != "*") & (aci$Significant[aci$ID == BEG09[BEG09n]] != "*") &
-         (aci$Significant[aci$ID == "11BEGC.0040"] != "*") & (aci$Significant[aci$ID == BEGC11[BEGC11n]] != "*")) {
-        aci$Next.Step[aci$ID == BE03[BE03n]]<-aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "Go to C"
-        aci$Interpretation[aci$ID == BE03[BE03n]]<-aci$Interpretation[aci$ID == BE03.40[BE03.40n]]<- "No medium-term and local-scale interactions"
-      }
-      # PxC = ns; PxI = *
-      if(aci$Significant[aci$ID == BE03[BE03n]] == "*") {
-        aci$Next.Step[aci$ID == BE03[BE03n]]<-aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "END"
-        aci$Interpretation[aci$ID == BE03[BE03n]]<-aci$Interpretation[aci$ID == BE03.40[BE03.40n]]<- "PULSE DISTURBANCE - IMPACT DETECTED from medium-term and local-scale: temporal trends in impact location differs from controls"
-      }
-    }
-    # PxC = *;PxI = ns
-    if(aci$Significant[aci$ID == BE03.40[BE03.40n]] == "*") {
-      if(aci$Significant[aci$ID == BE03[BE03n]] != "*") {
-        aci$Next.Step[aci$ID == BE03[BE03n]]<- aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "END"
-        aci$Interpretation[aci$ID == BE03[BE03n]]<-aci$Interpretation[aci$ID == BE03.40[BE03.40n]]<- "Medium-term and local-scale interactions: temporal trends are not associated with location impact"
-      }
-      # PxC = *; PxI = *
-      if(aci$Significant[aci$ID == BE03[BE03n]] == "*") {
-        aci$Next.Step[aci$ID == BE03[BE03n]]<-aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "END"
-        aci$Interpretation[aci$ID == BE03[BE03n]]<-aci$Interpretation[aci$ID == BE03.40[BE03.40n]]<- "CAUTION - to many variability to detec a impact: temporal trends in impact location differs from controls"
-      }
-    }
-  }
-
 
   # Location vs Periods - P x L
-  if(aav.model == "BEC") {
     BE03.40<- c("03BE.0040","03BE.0041","03BE.0042")
     BE03.40n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0040"]),
                       is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0041"]),
@@ -3233,75 +3142,29 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
                    is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0032"]),
                    is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0033"]),
                    is.na(aci$Post.Hoc.Pooling[aci$ID == "03BE.0034"])) == F)
+    aci$Next.Step[aci$ID == BE03[BE03n]]<-aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "END: Location Group"
 
     # PxC = ns; PxI = ns
     if(aci$Significant[aci$ID == BE03.40[BE03.40n]] != "*") {
-      ### se PxC, PxI, T(P)xC, T(P)xI  = ns
-      if((aci$Significant[aci$ID == BE03[BE03n]] != "*") &
-         (aci$Significant[aci$ID == "10BEC.0040"] != "*") & (aci$Significant[aci$ID == BEC10[BEC10n]] != "*")) {
-        aci$Next.Step[aci$ID == BE03[BE03n]]<-aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "Go to C"
+      if(aci$Significant[aci$ID == BE03[BE03n]] != "*") {
         aci$Interpretation[aci$ID == BE03[BE03n]]<-aci$Interpretation[aci$ID == BE03.40[BE03.40n]]<- "No medium-term and local-scale interactions"
+        ### if PxC, PxI, T(P)xC, T(P)xI  = ns go to C; if not, end
+        if(aci$Significant[aci$ID == "10BEC.0040"] != "*" & aci$Significant[aci$ID == BEC10[BEC10n]] != "*")
+          aci$Next.Step[aci$ID == BE03[BE03n]]<-aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "Go to C"
       }
-      # PxC = ns; PxI = *
-      if(aci$Significant[aci$ID == BE03[BE03n]] == "*") {
-        aci$Next.Step[aci$ID == BE03[BE03n]]<-aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "END"
-        aci$Interpretation[aci$ID == BE03[BE03n]]<-aci$Interpretation[aci$ID == BE03.40[BE03.40n]]<- "PULSE DISTURBANCE - IMPACT DETECTED from medium-term and local-scale: temporal trends in impact location differs from controls"
+        # PxC = ns; PxI = *
+        if(aci$Significant[aci$ID == BE03[BE03n]] == "*") {
+          aci$Interpretation[aci$ID == BE03[BE03n]]<-aci$Interpretation[aci$ID == BE03.40[BE03.40n]]<- "PULSE DISTURBANCE - IMPACT DETECTED from medium-term and local-scale: temporal trends in impact location differs from controls"
+        }
       }
-    }
     # PxC = *;PxI = ns
     if(aci$Significant[aci$ID == BE03.40[BE03.40n]] == "*") {
       if(aci$Significant[aci$ID == BE03[BE03n]] != "*") {
-        aci$Next.Step[aci$ID == BE03[BE03n]]<- aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "END"
         aci$Interpretation[aci$ID == BE03[BE03n]]<-aci$Interpretation[aci$ID == BE03.40[BE03.40n]]<- "Medium-term and local-scale interactions: temporal trends are not associated with location impact"
       }
       # PxC = *; PxI = *
       if(aci$Significant[aci$ID == BE03[BE03n]] == "*") {
-        aci$Next.Step[aci$ID == BE03[BE03n]]<-aci$Next.Step[aci$ID == BE03.40[BE03.40n]]<- "END"
         aci$Interpretation[aci$ID == BE03[BE03n]]<-aci$Interpretation[aci$ID == BE03.40[BE03.40n]]<- "CAUTION - to many variability to detec a impact: temporal trends in impact location differs from controls"
-      }
-    }
-  }
-
-
-  # Location - L
-  if(aav.model == "BEGC" | aav.model == "BEC" | aav.model == "CEG" | aav.model == "CE") {
-    E02.40<- c("02E.0040","02E.0041","02E.0042","02E.0043","02E.0044")
-    E02.40n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0040"]),
-                     is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0041"]),
-                     is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0042"]),
-                     is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0043"]),
-                     is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0044"])) == F)
-
-    E02<- c("02E.0030","02E.0031","02E.0032","02E.0033","02E.0034","02E.0035","02E.0036")
-    E02n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0030"]),
-                  is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0031"]),
-                  is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0032"]),
-                  is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0033"]),
-                  is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0034"]),
-                  is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0035"]),
-                  is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0036"])) == F)
-    # C = ns; I = ns
-    if(aci$Significant[aci$ID == E02.40[E02.40n]] != "*") {
-      if(aci$Significant[aci$ID == E02[E02n]] != "*") {
-        aci$Next.Step[aci$ID == E02[E02n]]<-aci$Next.Step[aci$ID == E02.40[E02.40n]]<- "END"
-        aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- "No long-term and local-scale differences among control and impact locations"
-      }
-      # C = ns; I = *
-      if(aci$Significant[aci$ID == E02[E02n]] == "*") {
-        aci$Next.Step[aci$ID == E02[E02n]]<-aci$Next.Step[aci$ID == E02.40[E02.40n]]<- "END"
-        aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and local-scale: impact location differs from controls"
-      }
-    }
-    # C = *; I = ns
-    if(aci$Significant[aci$ID == E02.40[E02.40n]] == "*") {
-      if(aci$Significant[aci$ID == E02[E02n]] != "*") {
-        aci$Next.Step[aci$ID == E02[E02n]]<-aci$Next.Step[aci$ID == E02.40[E02.40n]]<- "END"
-        aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- "Long-term and local-scale differences: spatial trends are not associated with impact location"
-      }
-      # C = *; I = *
-      if(aci$Significant[aci$ID == E02[E02n]] == "*") {
-        aci$Next.Step[aci$ID == E02[E02n]]<-aci$Next.Step[aci$ID == E02.40[E02.40n]]<- "END"
-        aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- "CAUTION - to many variability to detec a impact: impact location differs from controls"
       }
     }
   }
@@ -3311,6 +3174,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
   if(aav.model == "CEG") {
     CEG11<- c("11CEG.0030","11CEG.0031")
     CEG11n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "11CEG.0030"]), is.na(aci$Post.Hoc.Pooling[aci$ID == "11CEG.0031"])) == F)
+    aci$Next.Step[aci$ID == CEG11[CEG11n]]<-aci$Next.Step[aci$ID == "11CEG.0040"]<- "END: Site Group; Go to TxC"
 
     # TxS(C) = ns; TxS(I) = ns
     if(aci$Significant[aci$ID == "11CEG.0040"] != "*") {
@@ -3320,19 +3184,16 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       }
       # TxS(C) = ns; TxS(I) = *
       if(aci$Significant[aci$ID == CEG11[CEG11n]] == "*") {
-        aci$Next.Step[aci$ID == CEG11[CEG11n]]<-aci$Next.Step[aci$ID == "11CEG.0040"]<- "Go to TxC"
         aci$Interpretation[aci$ID == CEG11[CEG11n]]<-aci$Interpretation[aci$ID == "11CEG.0040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and small-scale: temporal trends in impact sites differs from controls"
       }
     }
     # TxS(C) = *; TxS(I) = ns
     if(aci$Significant[aci$ID == "11CEG.0040"] == "*") {
       if(aci$Significant[aci$ID == CEG11[CEG11n]] != "*") {
-        aci$Next.Step[aci$ID == CEG11[CEG11n]]<-aci$Next.Step[aci$ID == "11CEG.0040"]<- "Go to TxC"
         aci$Interpretation[aci$ID == CEG11[CEG11n]]<-aci$Interpretation[aci$ID == "11CEG.0040"]<- "Short-term and small-scale interactions: temporal trends are not associated with impact sites"
       }
       # TxS(C) = *; TxS(I) = *
       if(aci$Significant[aci$ID == CEG11[CEG11n]] == "*") {
-        aci$Next.Step[aci$ID == CEG11[CEG11n]]<-aci$Next.Step[aci$ID == "11CEG.0040"]<- "Go to TxC"
         aci$Interpretation[aci$ID == CEG11[CEG11n]]<-aci$Interpretation[aci$ID == "11CEG.0040"]<- "CAUTION - to many variability to detec a impact: temporal trends in impact sites differs from controls"
       }
     }
@@ -3343,34 +3204,74 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     CE10n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "10CE.0030"]),
                    is.na(aci$Post.Hoc.Pooling[aci$ID == "10CE.0031"]),
                    is.na(aci$Post.Hoc.Pooling[aci$ID == "10CE.0032"])) == F)
+    aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "END: Location Group"
 
     # TxC = ns; TxI = ns
     if(aci$Significant[aci$ID == "10CE.0040"] != "*") {
-      # sE TxC, TxI, TxS(C), TxS(I) = ns
-      if((aci$Significant[aci$ID == CE10[CE10n]] != "*") &
-         (aci$Significant[aci$ID == "11CEG.0040"] != "*") & (aci$Significant[aci$ID == CEG11[CEG11n]] != "*")) {
-        aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "Go to C"
+      if(aci$Significant[aci$ID == CE10[CE10n]] != "*") {
         aci$Interpretation[aci$ID == CE10[CE10n]]<-aci$Interpretation[aci$ID == "10CE.0040"]<- "No short-term and local-scale interactions"
+       aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "Go to C"
       }
       # TxC = ns; TxI = *
       if(aci$Significant[aci$ID == CE10[CE10n]] == "*") {
-        aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "END"
         aci$Interpretation[aci$ID == CE10[CE10n]]<-aci$Interpretation[aci$ID == "10CE.0040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and local-scale: temporal trends in impact location differs from controls"
       }
     }
     # TxC = *; TxI = ns
     if(aci$Significant[aci$ID == "10CE.0040"] == "*") {
       if(aci$Significant[aci$ID == CE10[CE10n]] != "*") {
-        aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "END"
         aci$Interpretation[aci$ID == CE10[CE10n]]<-aci$Interpretation[aci$ID == "10CE.0040"]<- "short-term and local-scale interactions: temporal trends are not associate with impact location"
       }
       # TxC) = *; TxI = *
       if(aci$Significant[aci$ID == CE10[CE10n]] == "*") {
-        aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "END"
         aci$Interpretation[aci$ID == CE10[CE10n]]<-aci$Interpretation[aci$ID == "10CE.0040"]<- "CAUTION - to many variability to detec a impact: temporal trends in impact location differs from controls"
       }
     }
   }
+
+
+  ### Sites - S(L)
+  if(aav.model == "BEGC" | aav.model == "CEG") {
+      EG05<- c("05EG.0030","05EG.0031","05EG.0032","05EG.0033")
+      EG05n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0030"]),
+                     is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0031"]),
+                     is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0032"]),
+                     is.na(aci$Post.Hoc.Pooling[aci$ID == "05EG.0033"])) == F)
+      aci$Next.Step[aci$ID == EG05[EG05n]]<-aci$Next.Step[aci$ID == "05EG.0040"]<- "END: Site Group"
+
+      # S(C) = ns; S(I) = ns
+      if(aci$Significant[aci$ID == "05EG.0040"] != "*") {
+        if(aci$Significant[aci$ID == EG05[EG05n]] != "*") {
+          aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- "No long-term and small-scale differences among control and impact sites"
+        }
+        # S(C) = ns; S(I) = *
+        if(aci$Significant[aci$ID == EG05[EG05n]] == "*") {
+          aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and small-scale: impact sites differs from controls"
+        }
+      }
+      # S(C) = *; S(I) = ns
+      if(aci$Significant[aci$ID == "05EG.0040"] == "*") {
+        if(aci$Significant[aci$ID == EG05[EG05n]] != "*") {
+          aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- "Long-term and small-scale differences: spatial trends are not associated with impact sites"
+        }
+        # S(C) = *; S(I) = *
+        if(aci$Significant[aci$ID == EG05[EG05n]] == "*") {
+          aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- "CAUTION - to many variability to detec a impact from long-term and small-scale: impact sites differs from controls"
+        }
+      }
+    }
+  ### Sites - S(L) (The interpretation must be corrected if any previous interaction terms in the model are significant)
+  if(aav.model == "BEGC") {
+    if(!((aci$Significant[aci$ID == "11BEGC.0040"] != "*") & (aci$Significant[aci$ID == BEGC11[BEGC11n]] != "*") &
+       (aci$Significant[aci$ID == "09BEG.0040"] != "*") & (aci$Significant[aci$ID == BEG09[BEG09n]] != "*"))) {
+      aci$Next.Step[aci$ID == EG05[EG05n]]<-aci$Next.Step[aci$ID == "05EG.0040"]<- NA
+      aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- NA
+    }}
+  if(aav.model == "CEG") {
+    if(!((aci$Significant[aci$ID == "11CEG.0040"] != "*") & (aci$Significant[aci$ID == CEG11[CEG11n]] != "*"))) {
+      aci$Next.Step[aci$ID == EG05[EG05n]]<-aci$Next.Step[aci$ID == "05EG.0040"]<- NA
+      aci$Interpretation[aci$ID == EG05[EG05n]]<-aci$Interpretation[aci$ID == "05EG.0040"]<- NA
+    }}
 
 
   # Location vs Times (no Periods) - T x L
@@ -3379,6 +3280,7 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
     CE10n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "10CE.0030"]),
                    is.na(aci$Post.Hoc.Pooling[aci$ID == "10CE.0031"]),
                    is.na(aci$Post.Hoc.Pooling[aci$ID == "10CE.0032"])) == F)
+    aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "END: Location Group"
 
     # TxC = ns; TxI = ns
     if(aci$Significant[aci$ID == "10CE.0040"] != "*") {
@@ -3388,25 +3290,77 @@ asym.aci<- function(data, n.ftemp, n.fspac, names.impact,
       }
       # TxC = ns; TxI = *
       if(aci$Significant[aci$ID == CE10[CE10n]] == "*") {
-        aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "END"
         aci$Interpretation[aci$ID == CE10[CE10n]]<-aci$Interpretation[aci$ID == "10CE.0040"]<- "PULSE DISTURBANCE - IMPACT DETECTED from short-term and local-scale: temporal trends in impact location differs from controls"
       }
     }
     # TxC = *; TxI = ns
     if(aci$Significant[aci$ID == "10CE.0040"] == "*") {
       if(aci$Significant[aci$ID == CE10[CE10n]] != "*") {
-        aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "END"
         aci$Interpretation[aci$ID == CE10[CE10n]]<-aci$Interpretation[aci$ID == "10CE.0040"]<- "short-term and local-scale interactions: temporal trends are not associate with impact location"
       }
       # TxC) = *; TxI = *
       if(aci$Significant[aci$ID == CE10[CE10n]] == "*") {
-        aci$Next.Step[aci$ID == CE10[CE10n]]<-aci$Next.Step[aci$ID == "10CE.0040"]<- "END"
         aci$Interpretation[aci$ID == CE10[CE10n]]<-aci$Interpretation[aci$ID == "10CE.0040"]<- "CAUTION - to many variability to detec a impact: temporal trends in impact location differs from controls"
       }
     }
   }
 
-  #  Sites(in Locations(in Places))
+
+  # Location - L
+  if(aav.model == "BEGC" | aav.model == "BEC" | aav.model == "CEG" | aav.model == "CE") {
+      E02.40<- c("02E.0040","02E.0041","02E.0042","02E.0043","02E.0044")
+      E02.40n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0040"]),
+                       is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0041"]),
+                       is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0042"]),
+                       is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0043"]),
+                       is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0044"])) == F)
+
+      E02<- c("02E.0030","02E.0031","02E.0032","02E.0033","02E.0034","02E.0035","02E.0036")
+      E02n<-which(c(is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0030"]),
+                    is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0031"]),
+                    is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0032"]),
+                    is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0033"]),
+                    is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0034"]),
+                    is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0035"]),
+                    is.na(aci$Post.Hoc.Pooling[aci$ID == "02E.0036"])) == F)
+      aci$Next.Step[aci$ID == E02[E02n]]<-aci$Next.Step[aci$ID == E02.40[E02.40n]]<- "END: Location Group"
+
+      # C = ns; I = ns
+      if(aci$Significant[aci$ID == E02.40[E02.40n]] != "*") {
+        if(aci$Significant[aci$ID == E02[E02n]] != "*") {
+          aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- "No long-term and local-scale differences among control and impact locations"
+        }
+        # C = ns; I = *
+        if(aci$Significant[aci$ID == E02[E02n]] == "*") {
+          aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- "PRESS DISTURBANCE - IMPACT DETECTED from long-term and local-scale: impact location differs from controls"
+        }
+      }
+      # C = *; I = ns
+      if(aci$Significant[aci$ID == E02.40[E02.40n]] == "*") {
+        if(aci$Significant[aci$ID == E02[E02n]] != "*") {
+          aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- "Long-term and local-scale differences: spatial trends are not associated with impact location"
+        }
+        # C = *; I = *
+        if(aci$Significant[aci$ID == E02[E02n]] == "*") {
+          aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- "CAUTION - to many variability to detec a impact: impact location differs from controls"
+        }
+      }
+    }
+  # Location - L (The interpretation must be corrected if any previous interaction terms in the model are significant)
+  if(aav.model == "BEGC" | aav.model == "BEC") {
+    if(!((aci$Significant[aci$ID == BE03.40[BE03.40n]] != "*") & (aci$Significant[aci$ID == BE03[BE03n]] != "*") &
+       (aci$Significant[aci$ID == "10BEC.0040"] != "*") & (aci$Significant[aci$ID == BEC10[BEC10n]] != "*"))) {
+      aci$Next.Step[aci$ID == E02[E02n]]<-aci$Next.Step[aci$ID == E02.40[E02.40n]]<- NA
+      aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- NA
+    }}
+  if(aav.model == "CEG" | aav.model == "CE") {
+    if(!((aci$Significant[aci$ID == "10CE.0040"] != "*") & (aci$Significant[aci$ID == CE10[CE10n]] != "*"))) {
+      aci$Next.Step[aci$ID == E02[E02n]]<-aci$Next.Step[aci$ID == E02.40[E02.40n]]<- NA
+      aci$Interpretation[aci$ID == E02[E02n]]<-aci$Interpretation[aci$ID == E02.40[E02.40n]]<- NA
+    }}
+
+
+#  Sites(in Locations(in Places))
   if(aav.model == "DEG") {
     # S(C(P))
     aci$Next.Step[aci$ID == "08DEGn.0040"]<-"Go to PxS(T) and C(P)"
