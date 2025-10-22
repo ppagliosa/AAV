@@ -4,16 +4,16 @@
 \alias{ggmagnitude}
 \title{Create a plot showing the estimated magnitude of an ecological impact}
 \usage{
-ggmagnitude(data, aav.design, n.ftemp, n.fspac)
+ggmagnitude(data, tail = "upper")
 }
 \arguments{
 \item{data}{a list genereted from \code{\link[AAV]{magnitude}}.}
 
-\item{aav.design}{\code{baci} for beyond Before/After-Control/Impact design or \code{aci} for Post-Impact design.}
-
-\item{n.ftemp}{number of temporal factors.}
-
-\item{n.fspac}{number of spatial factors.}
+\item{tail}{only for \code{aci} post-impact design with only one disturbed location
+and multiple control locations.
+Perform an \code{upper} tailed, \code{lower} tailed or both join
+(\code{upper_lower}) plot for all terms of the \code{aav} analyses.
+Default is \code{upper}.}
 }
 \value{
 The function returns a xy plot with the original (top right), a random (= 0; bottom left)
@@ -29,14 +29,27 @@ and parameters as in \code{\link[AAV]{aav}}, but only considers one variable at 
 
 The estimates are plotted to each relevant term from the asymmetrical analysis of variance
 in order to determine the magnitude of the impact.
-The terms can be interpreted separated each other.
 
+The p-values in \code{aav} analyses came from an upper-tail test, except
+wheater the analyses for \code{aci} post-impact design with only one disturbed location
+are performed for a two-tailed test (i.e. aci.tailed.test = 2).
+In this case, a plot showing an upper-tailed, lower-tailed or both types of tail
+can be produced using the \code{tail} parameter.
+
+The terms can be interpreted separated each other.
 To each term there is a chart showing the observed p-values from the original data,
 and the expected p-value from a random data (resampled the original data)
 and from each estimated alteration on the mean and variance of the data.
 The magnitude of the impact can be discovered when the original p-value from a term
 is significant (p < 0.05). In this case, the first estimate of the altered mean and variance
 that is significant indicate the minimum magnitude of the impact that the original dataset can detect.
+
+Attention should be paid to whether the random data is significant.
+In these cases, some spurious significant p-values may occur.
+
+Usually, lower significance (e.g. p < 0.05) can be seen flowing from the bottom right to the bottom left side of the chart.
+Conversely, when visualising lower-tail tests the lower significance can be seen flowing from the top right to the top left of the chart.
+In the cases of spurious significance, the lower significance can be seen flowing from the bottom left to the bottom right.
 
 Wheather a term is significant, it could detect:
 
@@ -45,9 +58,9 @@ In baci desing:
 \item Before vs After x Impact vs Controls = B x I:   Long-term local-scale impact
 \item B x Site(I) = B x S(I):   Long-term small-scale impact
 \item Perido(After) x I = P(Aft) x I:   Medium-term local-scale impact
-\item Time(P(Aft)) x I = T(P(Aft)) x I:   Medium-term small-scale impact
-\item P(Aft) x S(I) or T(Aft) x I:   Short-term local-scale impact
-\item T(P(Aft)) x S(I) or T(Aft) x S(I):   Short-term local-scale impact
+\item P(Aft) x S(I):   Medium-term small-scale impact
+\item Time(P(Aft)) x I = T(P(Aft)) x I or T(Aft) x I:   Short-term local-scale impact
+\item T(P(Aft)) x S(I) or T(Aft) x S(I):   Short-term small-scale impact
 }
 
 In post-impact design with only one disturbed location and multiple control locations:
@@ -76,7 +89,7 @@ location and multiple control locations:
 # magnitude_var = c(0.1, 1, 2, 5, 10, 25, 50, 75, 100)
 library(ggplot2)
 data(ex.ggmag)
-ggmagnitude(data = ex.ggmag, aav.design = "baci", n.ftemp = 2, n.fspac = 1)
+ggmagnitude(data = ex.ggmag)
 
 }
 \references{

@@ -53,6 +53,7 @@ dataset and for each simulation of the magnitude of the impact on the mean and v
 ('aav.design','n.ftemp','n.fspac'),
 a code for the type of the impact ('impType'), the magnitude of the variance alteration ('magVAR'),
 the magnitude of the mean alteration ('magMD'), the corresponding term of the analysis ('term'),
+wheater it is an upper-tailed or lower-tailed test ('two.tail'),
 and the P-Value from the specific analysis ('p.value').}
 }
 \description{
@@ -89,9 +90,9 @@ In baci desing:
 \item Before vs After x Impact vs Controls = B x I:   Long-term local-scale impact
 \item B x Site(I) = B x S(I):   Long-term small-scale impact
 \item Perido(After) x I = P(Aft) x I:   Medium-term local-scale impact
-\item Time(P(Aft)) x I = T(P(Aft)) x I:   Medium-term small-scale impact
-\item P(Aft) x S(I) or T(Aft) x I:   Short-term local-scale impact
-\item T(P(Aft)) x S(I) or T(Aft) x S(I):   Short-term local-scale impact
+\item P(Aft) x S(I):   Medium-term small-scale impact
+\item Time(P(Aft)) x I = T(P(Aft)) x I or T(Aft) x I:   Short-term local-scale impact
+\item T(P(Aft)) x S(I) or T(Aft) x S(I):   Short-term small-scale impact
 }
 
 In post-impact design with only one disturbed location and multiple control locations:

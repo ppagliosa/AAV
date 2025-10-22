@@ -53,9 +53,9 @@
 #' * Before vs After x Impact vs Controls = B x I:   Long-term local-scale impact
 #' * B x Site(I) = B x S(I):   Long-term small-scale impact
 #' * Perido(After) x I = P(Aft) x I:   Medium-term local-scale impact
-#' * Time(P(Aft)) x I = T(P(Aft)) x I:   Medium-term small-scale impact
-#' * P(Aft) x S(I) or T(Aft) x I:   Short-term local-scale impact
-#' * T(P(Aft)) x S(I) or T(Aft) x S(I):   Short-term local-scale impact
+#' * P(Aft) x S(I):   Medium-term small-scale impact
+#' * Time(P(Aft)) x I = T(P(Aft)) x I or T(Aft) x I:   Short-term local-scale impact
+#' * T(P(Aft)) x S(I) or T(Aft) x S(I):   Short-term small-scale impact
 #'
 #' In post-impact design with only one disturbed location and multiple control locations:
 #' * Impact vs Controls = I:   Long-term local-scale impact
@@ -82,6 +82,7 @@
 #' ('aav.design','n.ftemp','n.fspac'),
 #' a code for the type of the impact ('impType'), the magnitude of the variance alteration ('magVAR'),
 #' the magnitude of the mean alteration ('magMD'), the corresponding term of the analysis ('term'),
+#' wheater it is an upper-tailed or lower-tailed test ('two.tail'),
 #' and the P-Value from the specific analysis ('p.value').}
 #'
 #' @author Paulo Pagliosa \email{paulo.pagliosa@ufsc.br}
@@ -650,12 +651,12 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
     ###----------------------------------- extract p-values for each impact type
 
     # real data (obs_obs_obs)
-    tab.final<-data.frame(matrix(data=NA, nrow=0, ncol=8))
-    names(tab.final)<-c("aav.design","n.ftemp","n.fspac","impType","magVAR","magMD","term","p.value")
+    tab.final<-data.frame(matrix(data=NA, nrow=0, ncol=9))
+    names(tab.final)<-c("aav.design","n.ftemp","n.fspac","impType","magVAR","magMD","term","two.tail","p.value")
 
   for (fc in 1:length(aav_tests$asym.anova_complete)) {
-    tab<-data.frame(matrix(data=NA, nrow=8, ncol=8))
-    names(tab)<-c("aav.design","n.ftemp","n.fspac","impType","magVAR","magMD","term","p.value")
+    tab<-data.frame(matrix(data=NA, nrow=24, ncol=9))
+    names(tab)<-c("aav.design","n.ftemp","n.fspac","impType","magVAR","magMD","term","two.tail","p.value")
     tab$aav.design<-aav.design
     tab$n.ftemp<-n.ftemp
     tab$n.fspac<-n.fspac
@@ -663,6 +664,7 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
     tab$impType<-strsplit(fc.n,"_")[[1]][1]
     tab$magVAR<-strsplit(fc.n,"_")[[1]][2]
     tab$magMD<-strsplit(fc.n,"_")[[1]][3]
+    tab$two.tail<-"upper"
     aav.res<-aav_tests$asym.anova_complete[[fc]]
 
     if(aav.design == "baci") {
@@ -719,7 +721,6 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
       }
     }
     if(aav.design == "aci" & n.ftemp != 0) {
-      if(aci.tailed.test == 1){
       if(tab$impType[1] == "L.imp" | tab$impType[1] == "obs") {
         tab$term[1]<- "I"
         #p.value
@@ -770,66 +771,151 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
           tab$p.value[8]<-aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T x S(I)"  & aav.res$Final.Table == "Yes"]
         }
       }
-      }
+
       if(aci.tailed.test == 2){
-        if(tab$impType[1] == "L.imp" | tab$impType[1] == "obs") {
-          tab$term[1]<- "I"
+        if(tab$impType[9] == "L.imp" | tab$impType[1] == "obs") {
+          tab$term[9]<- "I"
+          # two.tail
+          tab$two.tail[9]<-"lower"
           #p.value
-          tab$p.value[1]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "Impact vs Controls = I" & aav.res$Final.Table == "Yes"],
-                              aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "Impact vs Controls = I" & aav.res$Final.Table == "Yes"])
+          tab$p.value[9]<-aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "Impact vs Controls = I" & aav.res$Final.Table == "Yes"]
         }
         if(n.fspac == 2) {
-          if(tab$impType[2] == "S.imp" | tab$impType[1] == "obs") {
-            tab$term[2]<- "S(I)"
+          if(tab$impType[10] == "S.imp" | tab$impType[1] == "obs") {
+            tab$term[10]<- "S(I)"
+            # two.tail
+            tab$two.tail[10]<-"lower"
             #p.value
-            tab$p.value[2]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "S(I)" & aav.res$Final.Table == "Yes"],
-                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "S(I)" & aav.res$Final.Table == "Yes"])
+            tab$p.value[10]<-aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "S(I)" & aav.res$Final.Table == "Yes"]
           }
         }
         if(n.ftemp == 2) {
-          if(tab$impType[3] == "P.imp" | tab$impType[1] == "obs") {
-            tab$term[3]<- "P x I"
+          if(tab$impType[11] == "P.imp" | tab$impType[1] == "obs") {
+            tab$term[11]<- "P x I"
+            # two.tail
+            tab$two.tail[11]<-"lower"
             #p.value
-            tab$p.value[3]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "P x I"  & aav.res$Final.Table == "Yes"],
-                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "P x I"  & aav.res$Final.Table == "Yes"])
+            tab$p.value[11]<-aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "P x I"  & aav.res$Final.Table == "Yes"]
           }
-          if(tab$impType[4] == "TP.imp" | tab$impType[1] == "obs") {
-            tab$term[4]<- "T(P) x I"
+          if(tab$impType[12] == "TP.imp" | tab$impType[1] == "obs") {
+            tab$term[12]<- "T(P) x I"
+            # two.tail
+            tab$two.tail[12]<-"lower"
             #p.value
-            tab$p.value[4]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T(P) x I"  & aav.res$Final.Table == "Yes"],
-                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T(P) x I"  & aav.res$Final.Table == "Yes"])
+            tab$p.value[12]<-aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T(P) x I"  & aav.res$Final.Table == "Yes"]
           }
         }
         if(n.ftemp == 2 & n.fspac == 2) {
-          if(tab$impType[5] == "SP.imp" | tab$impType[1] == "obs") {
-            tab$term[5]<- "P x S(I)"
+          if(tab$impType[13] == "SP.imp" | tab$impType[1] == "obs") {
+            tab$term[13]<- "P x S(I)"
+            # two.tail
+            tab$two.tail[13]<-"lower"
             #p.value
-            tab$p.value[5]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "P x S(I)"  & aav.res$Final.Table == "Yes"],
-                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "P x S(I)"  & aav.res$Final.Table == "Yes"])
+            tab$p.value[13]<-aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "P x S(I)"  & aav.res$Final.Table == "Yes"]
           }
-          if(tab$impType[6] == "STP.imp" | tab$impType[1] == "obs") {
-            tab$term[6]<- "T(P) x S(I)"
+          if(tab$impType[14] == "STP.imp" | tab$impType[1] == "obs") {
+            tab$term[14]<- "T(P) x S(I)"
+            # two.tail
+            tab$two.tail[14]<-"lower"
             #p.value
-            tab$p.value[6]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T(P) x S(I)"  & aav.res$Final.Table == "Yes"],
-                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T(P) x S(I)"  & aav.res$Final.Table == "Yes"])
+            tab$p.value[14]<-aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T(P) x S(I)"  & aav.res$Final.Table == "Yes"]
           }
         }
         if(n.ftemp == 1) {
-          if(tab$impType[7] == "T.imp" | tab$impType[1] == "obs") {
-            tab$term[7]<- "T x I"
+          if(tab$impType[15] == "T.imp" | tab$impType[1] == "obs") {
+            tab$term[15]<- "T x I"
+            # two.tail
+            tab$two.tail[15]<-"lower"
             #p.value
-            tab$p.value[7]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T x I"  & aav.res$Final.Table == "Yes"],
-                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T x I"  & aav.res$Final.Table == "Yes"])
+            tab$p.value[15]<-aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T x I"  & aav.res$Final.Table == "Yes"]
           }
         }
         if(n.ftemp == 1 & n.fspac == 2) {
-          if(tab$impType[8] == "ST.imp" | tab$impType[1] == "obs") {
-            tab$term[8]<- "T x S(I)"
+          if(tab$impType[16] == "ST.imp" | tab$impType[1] == "obs") {
+            tab$term[16]<- "T x S(I)"
+            # two.tail
+            tab$two.tail[16]<-"lower"
             #p.value
-            tab$p.value[8]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T x S(I)"  & aav.res$Final.Table == "Yes"],
-                                aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T x S(I)"  & aav.res$Final.Table == "Yes"])
+            tab$p.value[16]<-aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T x S(I)"  & aav.res$Final.Table == "Yes"]
           }
         }
+
+        if(tab$impType[17] == "L.imp" | tab$impType[1] == "obs") {
+          tab$term[17]<- "I"
+          # two.tail
+          tab$two.tail[17]<-"upper_lower"
+          #p.value
+          tab$p.value[17]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "Impact vs Controls = I" & aav.res$Final.Table == "Yes"],
+                              aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "Impact vs Controls = I" & aav.res$Final.Table == "Yes"])
+        }
+        if(n.fspac == 2) {
+          if(tab$impType[18] == "S.imp" | tab$impType[1] == "obs") {
+            tab$term[18]<- "S(I)"
+            # two.tail
+            tab$two.tail[18]<-"upper_lower"
+            #p.value
+            tab$p.value[18]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "S(I)" & aav.res$Final.Table == "Yes"],
+                                 aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "S(I)" & aav.res$Final.Table == "Yes"])
+          }
+        }
+        if(n.ftemp == 2) {
+          if(tab$impType[19] == "P.imp" | tab$impType[1] == "obs") {
+            tab$term[19]<- "P x I"
+            # two.tail
+            tab$two.tail[19]<-"upper_lower"
+            #p.value
+            tab$p.value[19]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "P x I"  & aav.res$Final.Table == "Yes"],
+                                 aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "P x I"  & aav.res$Final.Table == "Yes"])
+          }
+          if(tab$impType[20] == "TP.imp" | tab$impType[1] == "obs") {
+            tab$term[20]<- "T(P) x I"
+            # two.tail
+            tab$two.tail[20]<-"upper_lower"
+            #p.value
+            tab$p.value[20]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T(P) x I"  & aav.res$Final.Table == "Yes"],
+                                 aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T(P) x I"  & aav.res$Final.Table == "Yes"])
+          }
+        }
+        if(n.ftemp == 2 & n.fspac == 2) {
+          if(tab$impType[21] == "SP.imp" | tab$impType[1] == "obs") {
+            tab$term[21]<- "P x S(I)"
+            # two.tail
+            tab$two.tail[21]<-"upper_lower"
+            #p.value
+            tab$p.value[21]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "P x S(I)"  & aav.res$Final.Table == "Yes"],
+                                 aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "P x S(I)"  & aav.res$Final.Table == "Yes"])
+          }
+          if(tab$impType[22] == "STP.imp" | tab$impType[1] == "obs") {
+            tab$term[22]<- "T(P) x S(I)"
+            # two.tail
+            tab$two.tail[22]<-"upper_lower"
+            #p.value
+            tab$p.value[22]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T(P) x S(I)"  & aav.res$Final.Table == "Yes"],
+                                 aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T(P) x S(I)"  & aav.res$Final.Table == "Yes"])
+          }
+        }
+        if(n.ftemp == 1) {
+          if(tab$impType[23] == "T.imp" | tab$impType[1] == "obs") {
+            tab$term[23]<- "T x I"
+            # two.tail
+            tab$two.tail[23]<-"upper_lower"
+            #p.value
+            tab$p.value[23]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T x I"  & aav.res$Final.Table == "Yes"],
+                                 aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T x I"  & aav.res$Final.Table == "Yes"])
+          }
+        }
+        if(n.ftemp == 1 & n.fspac == 2) {
+          if(tab$impType[24] == "ST.imp" | tab$impType[1] == "obs") {
+            tab$term[24]<- "T x S(I)"
+            # two.tail
+            tab$two.tail[24]<-"upper_lower"
+            #p.value
+            tab$p.value[24]<-min(aav.res$P.Value.Upper.Tail[aav.res$Source.of.Variation == "T x S(I)"  & aav.res$Final.Table == "Yes"],
+                                 aav.res$P.Value.Lower.Tail[aav.res$Source.of.Variation == "T x S(I)"  & aav.res$Final.Table == "Yes"])
+          }
+        }
+
+
       }
     }
     if(aav.design == "aci" & n.ftemp == 0) {
