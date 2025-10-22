@@ -28,16 +28,23 @@
 #' To each term there is a chart showing the observed p-values from the original data,
 #' and the expected p-value from a random data (resampled the original data)
 #' and from each estimated alteration on the mean and variance of the data.
+#'
 #' The magnitude of the impact can be discovered when the original p-value from a term
-#' is significant (p < 0.05). In this case, the first estimate of the altered mean and variance
-#' that is significant indicate the minimum magnitude of the impact that the original dataset can detect.
+#' is significant (p < 0.05). In this case, two magnitudes can be identified.
+#' The first significant alteration to the mean and variance indicates the minimum
+#' magnitude of impact that the original dataset can detect.
+#' Estimates with the same p-value as the original data may represent
+#' the magnitude of the detected impact.
 #'
 #' Attention should be paid to whether the random data is significant.
 #' In these cases, some spurious significant p-values may occur.
 #'
-#' Usually, lower significance (e.g. p < 0.05) can be seen flowing from the bottom right to the bottom left side of the chart.
-#' Conversely, when visualising lower-tail tests the lower significance can be seen flowing from the top right to the top left of the chart.
-#' In the cases of spurious significance, the lower significance can be seen flowing from the bottom left to the bottom right.
+#' Usually, lower significance (e.g. p < 0.05) can be seen flowing from the
+#' bottom right to the top left side of the chart.
+#' Conversely, when visualising lower-tail tests the lower significance can be seen
+#' flowing from the top left to the bottom right of the chart.
+#' In the cases of spurious significance, the lower significance can be seen
+#' flowing from the bottom left to the top right.
 #'
 #' Wheather a term is significant, it could detect:
 #'
@@ -82,9 +89,7 @@
 #'
 #' @examples
 #' # Example for BACI design containing 2 temporal factors and 1 spatial factor.
-#' # using the vectors:
-#' # magnitude_md = c(0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1) and
-#' # magnitude_var = c(0.1, 1, 2, 5, 10, 25, 50, 75, 100)
+#' # using the vectors: magnitude_md = c(0.10, 0.50, 1); magnitude_var = c(0.1, 1, 10)
 #' library(ggplot2)
 #' data(ex.ggmag)
 #' ggmagnitude(data = ex.ggmag)
