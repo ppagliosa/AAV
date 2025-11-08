@@ -101,7 +101,7 @@ ggmagnitude <- function(data, tail = "upper") {
     ad<- unique(data$aav.design)
     nft<-unique(data$n.ftemp)
     nt<-length(unique(data$term))
-    size<-ifelse(nt == 2, 4.5, ifelse(nt == 3, 3.5, ifelse(nt == 4, 3.1, ifelse(nt == 6, 3))))
+    size<-ifelse(nt == 2, 4.5, ifelse(nt == 3, 3.5, ifelse(nt == 4, 3, ifelse(nt == 6, 3))))
 
     ifelse(ad == "aci" & nft != 0 & tail == "lower", data<-data[data$two.tail == "lower",],
            ifelse(ad == "aci" & nft != 0 & tail == "upper_lower", data<-data[data$two.tail == "upper_lower",],
@@ -110,11 +110,13 @@ ggmagnitude <- function(data, tail = "upper") {
     data$magVAR <- ordered(data$magVAR, levels=c(unique(data$magVAR[!data$magVAR == "obs"]),"obs"))
     data$magMD <- ordered(data$magMD, levels=c(unique(data$magMD[!data$magMD == "obs"]),"obs"))
     if(ad == "baci" & nt == 4) data$term <- ordered(data$term, levels=c("B x I", "T(Aft) x I","B x S(I)","T(Aft) x S(I)"))
-    if(ad == "aci" & nt == 4) data$term <- ordered(data$term, levels=c("I","T x I","S(I)","T x S(I)"))
     if(ad == "baci" & nt == 6) data$term <- ordered(data$term, levels=c("B x I", "P(Aft) x I","T(P(Aft)) x I",
                                                                         "B x S(I)","P(Aft) x S(I)",  "T(P(Aft)) x S(I)"))
+    if(ad == "aci" & nft != 0 & nt == 4) data$term <- ordered(data$term, levels=c("I","T x I","S(I)","T x S(I)"))
     if(ad == "aci" & nt == 6) data$term <- ordered(data$term, levels=c("I","P x I","T(P) x I",
                                                                        "S(I)","P x S(I)","T(P) x S(I)"))
+    if(ad == "aci" & nft == 0 & nt == 2) data$term <- ordered(data$term, levels=c("T","S(T)"))
+    if(ad == "aci" & nft == 0 & nt == 4) data$term <- ordered(data$term, levels=c("T","S(T)","P x T","P x S(T)"))
 
     data$threshold[data$p.value <= 0.055]<-"low"
     data$threshold[data$p.value > 0.055]<-"high"

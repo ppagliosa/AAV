@@ -298,16 +298,13 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
         time1<-unique(data$time)[1]
         site1<-unique(data$site)[1]
         ulmc<-unique(data$location[data$location != names.impact])
-        up<-unique(data$period)
         ut<-unique(data$time)
-        us<-unique(data$site)
       }
       if(n.ftemp == 2 & n.fspac == 1) {
         names(data)<-c("period", "time", "location", "obs_obs_obs")
         period1<-unique(data$period)[1]
         time1<-unique(data$time)[1]
         ulmc<-unique(data$location[data$location != names.impact])
-        up<-unique(data$period)
         ut<-unique(data$time)
       }
       if(n.ftemp == 1 & n.fspac == 2) {
@@ -316,7 +313,6 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
         site1<-unique(data$site)[1]
         ulmc<-unique(data$location[data$location != names.impact])
         ut<-unique(data$time)
-        us<-unique(data$site)
       }
       if(n.ftemp == 1 & n.fspac == 1) {
         names(data)<-c("time", "location", "obs_obs_obs")
@@ -384,139 +380,138 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
         for (magMD in magnitude_md) {
 
         ### LONG-TERM LOCAL-SCALE IMPACT (press impact)
-        md_control<-mean(data$obs_obs_obs[data$location != names.impact]) # md from control locations
-        a_new<-(md_control * (1 + magMD)) - b_new * md_control
-
-        ### Criar novo conjunto de dados que preserva média e variância dos conjuntos originais
-        l.out<-length(data$obs_obs_obs[data$location != names.impact])/length(ulmc)
-        base <- seq(-l.out/2, l.out/2, length.out = l.out)
-        tab_stat<-data.frame()
-        for (xx in ulmc) {
-          y<- data$obs_obs_obs[data$location == xx]
-          this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
-          tab_stat<-rbind(tab_stat,this.ts)
-        }
-        values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-        data$new<-data$obs_obs_obs
-        data$new[data$location == names.impact]<- round(a_new + b_new * values_adj)
-        names(data)[length(data)]<-paste0("L.imp_",magVAR,"_",magMD)
+          ### Criar novo conjunto de dados que preserva média e variância dos conjuntos originais
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact])
+          base <- seq(-l.out/2, l.out/2, length.out = l.out)
+          tab_stat<-data.frame()
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
+            tab_stat<-rbind(tab_stat,this.ts)
+          }
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
+          data$new[data$location == names.impact]<- round(a_new + b_new * values_adj)
+          names(data)[names(data) == "new"]<-paste0("L.imp_",magVAR,"_",magMD)
 
         if(n.fspac == 2) {
           ### LONG-TERM SMALL-SCALE IMPACT (press impact)
-          md_s1<-mean(data$obs_obs_obs[data$location != names.impact & data$site == site1]) # md from controls s1
-          a_new<-(md_s1 * (1 + magMD)) - b_new * md_s1
-          l.out<-length(data$obs_obs_obs[data$location != names.impact & data$site == site1])/length(ulmc)
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact & data$site == site1,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact & data$site == site1])
           base <- seq(-l.out/2, l.out/2, length.out = l.out)
           tab_stat<-data.frame()
-          for (xx in ulmc) {
-            y<- data$obs_obs_obs[data$location == xx & data$site == site1]
-            this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
             tab_stat<-rbind(tab_stat,this.ts)
           }
-          values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-          data$new<-data$obs_obs_obs
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
           data$new[data$location == names.impact & data$site == site1]<- round(a_new + b_new * values_adj)
-          names(data)[length(data)]<-paste0("S.imp_",magVAR,"_",magMD)
+          names(data)[names(data) == "new"]<-paste0("S.imp_",magVAR,"_",magMD)
         }
         if(n.ftemp == 2) {
           ### MEDIUM-TERM LOCAL-SCALE (pulse impact)
-          md_p1<- mean(data$obs_obs_obs[data$location != names.impact & data$period == period1]) # md from controls p1
-          a_new<-(md_p1 * (1 + magMD)) - b_new * md_p1
-          l.out<-length(data$obs_obs_obs[data$location != names.impact & data$period == period1])/length(ulmc)
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact & data$period == period1,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact & data$period == period1])
           base <- seq(-l.out/2, l.out/2, length.out = l.out)
           tab_stat<-data.frame()
-          for (xx in ulmc) {
-            y<- data$obs_obs_obs[data$location == xx & data$period == period1]
-            this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
             tab_stat<-rbind(tab_stat,this.ts)
           }
-          values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-          data$new<-data$obs_obs_obs
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
           data$new[data$location == names.impact & data$period == period1]<- round(a_new + b_new * values_adj)
-          names(data)[length(data)]<-paste0("P.imp_",magVAR,"_",magMD)
+          names(data)[names(data) == "new"]<-paste0("P.imp_",magVAR,"_",magMD)
 
           ### SHORT-TERM LOCAL-SCALE IMPACT (pulse impact)
-          md_t1p1<- mean(data$obs_obs_obs[data$location != names.impact & data$time == time1 & data$period == period1]) # md from controls t1p1
-          a_new<-(md_t1p1 * (1 + magMD)) - b_new * md_t1p1
-          l.out<-length(data$obs_obs_obs[data$location != names.impact & data$time == time1 & data$period == period1])/length(ulmc)
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact & data$time == time1 & data$period == period1,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact & data$time == time1 & data$period == period1])
           base <- seq(-l.out/2, l.out/2, length.out = l.out)
           tab_stat<-data.frame()
-          for (xx in ulmc) {
-            y<- data$obs_obs_obs[data$location == xx & data$time == time1 & data$period == period1]
-            this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
             tab_stat<-rbind(tab_stat,this.ts)
           }
-          values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-          data$new<-data$obs_obs_obs
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
           data$new[data$location == names.impact & data$time == time1 & data$period == period1]<- round(a_new + b_new * values_adj)
-          names(data)[length(data)]<-paste0("TP.imp_",magVAR,"_",magMD)
+          names(data)[names(data) == "new"]<-paste0("TP.imp_",magVAR,"_",magMD)
         }
         if(n.ftemp == 2 & n.fspac == 2) {
           ### MEDIUM-TERM SMALL-SCALE (pulse impact)
-          md_s1p1<-mean(data$obs_obs_obs[data$location != names.impact & data$site == site1 & data$period == period1]) # md from controls s1p1
-          a_new<-(md_s1p1 * (1 + magMD)) - b_new * md_s1p1
-          l.out<-length(data$obs_obs_obs[data$location != names.impact & data$site == site1 & data$period == period1])/length(ulmc)
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact & data$site == site1 & data$period == period1,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact & data$site == site1 & data$period == period1])
           base <- seq(-l.out/2, l.out/2, length.out = l.out)
           tab_stat<-data.frame()
-          for (xx in ulmc) {
-            y<- data$obs_obs_obs[data$location == xx & data$site == site1 & data$period == period1]
-            this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
             tab_stat<-rbind(tab_stat,this.ts)
           }
-          values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-          data$new<-data$obs_obs_obs
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
           data$new[data$location == names.impact & data$site == site1 & data$period == period1]<- round(a_new + b_new * values_adj)
-          names(data)[length(data)]<-paste0("SP.imp_",magVAR,"_",magMD)
+          names(data)[names(data) == "new"]<-paste0("SP.imp_",magVAR,"_",magMD)
 
           ### SHORT-TERM SMALL-SCALE IMPACT (pulse impact)
-          md_s1t1p1<-mean(data$obs_obs_obs[data$location != names.impact & data$site == site1 & data$time == time1 & data$period == period1]) # md from controls s1t1p1
-          a_new<-(md_s1t1p1 * (1 + magMD)) - b_new * md_s1t1p1
-          l.out<-length(data$obs_obs_obs[data$location != names.impact & data$site == site1 & data$time == time1 & data$period == period1])/length(ulmc)
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact & data$site == site1 & data$time == time1 & data$period == period1,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact & data$site == site1 & data$time == time1 & data$period == period1])
           base <- seq(-l.out/2, l.out/2, length.out = l.out)
           tab_stat<-data.frame()
-          for (xx in ulmc) {
-            y<- data$obs_obs_obs[data$location == xx & data$site == site1 & data$time == time1 & data$period == period1]
-            this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
             tab_stat<-rbind(tab_stat,this.ts)
           }
-          values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-          data$new<-data$obs_obs_obs
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
           data$new[data$location == names.impact & data$site == site1 & data$time == time1 & data$period == period1]<- round(a_new + b_new * values_adj)
-          names(data)[length(data)]<-paste0("STP.imp_",magVAR,"_",magMD)
+          names(data)[names(data) == "new"]<-paste0("STP.imp_",magVAR,"_",magMD)
         }
         if(n.ftemp == 1) {
           ### SHORT-TERM LOCAL-SCALE IMPACT (pulse impact)
-          md_t1<- mean(data$obs_obs_obs[data$location != names.impact & data$time == time1]) # md from controls t1
-          a_new<-(md_t1 * (1 + magMD)) - b_new * md_t1
-          l.out<-length(data$obs_obs_obs[data$location != names.impact & data$time == time1])/length(ulmc)
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact & data$time == time1,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact & data$time == time1])
           base <- seq(-l.out/2, l.out/2, length.out = l.out)
           tab_stat<-data.frame()
-          for (xx in ulmc) {
-            y<- data$obs_obs_obs[data$location == xx & data$time == time1]
-            this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
             tab_stat<-rbind(tab_stat,this.ts)
           }
-          values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-          data$new<-data$obs_obs_obs
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
           data$new[data$location == names.impact & data$time == time1]<- round(a_new + b_new * values_adj)
-          names(data)[length(data)]<-paste0("T.imp_",magVAR,"_",magMD)
+          names(data)[names(data) == "new"]<-paste0("T.imp_",magVAR,"_",magMD)
         }
         if(n.ftemp == 1 & n.fspac == 2) {
           ### SHORT-TERM SMALL-SCALE IMPACT (pulse impact)
-          md_s1t1<-mean(data$obs_obs_obs[data$location != names.impact & data$site == site1 & data$time == time1]) # md from controls s1t1
-          a_new<-(md_s1t1 * (1 + magMD)) - b_new * md_s1t1
-          l.out<-length(data$obs_obs_obs[data$location != names.impact & data$site == site1 & data$time == time1])/length(ulmc)
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact & data$site == site1 & data$time == time1,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact & data$site == site1 & data$time == time1])
           base <- seq(-l.out/2, l.out/2, length.out = l.out)
           tab_stat<-data.frame()
-          for (xx in ulmc) {
-            y<- data$obs_obs_obs[data$location == xx & data$site == site1 & data$time == time1]
-            this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
             tab_stat<-rbind(tab_stat,this.ts)
           }
-          values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-          data$new<-data$obs_obs_obs
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
           data$new[data$location == names.impact & data$site == site1 & data$time == time1]<- round(a_new + b_new * values_adj)
-          names(data)[length(data)]<-paste0("ST.imp_",magVAR,"_",magMD)
+          names(data)[names(data) == "new"]<-paste0("ST.imp_",magVAR,"_",magMD)
         }
       }
       }
@@ -538,7 +533,6 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
         site1<-unique(data$site)[1]
         ulmc<-unique(data$location[data$location != names.impact])
         up<-unique(data$place)
-        us<-unique(data$site)
       }
 
       ### GENERALIZED LOCAL-SCALE IMPACT
@@ -572,69 +566,73 @@ magnitude <- function(data, aav.design, n.ftemp, n.fspac, names.impact, names.be
         for (magMD in magnitude_md) {
 
         ### GENERALIZED LOCAL-SCALE IMPACT
-        md_control<-mean(data$obs_obs_obs[data$location != names.impact]) # md from control locations
-        a_new<-(md_control * (1 + magMD)) - b_new * md_control
-        l.out<-length(data$obs_obs_obs[data$location != names.impact])/length(ulmc)
-        base <- seq(-l.out/2, l.out/2, length.out = l.out)
-        tab_stat<-data.frame()
-        for (xx in ulmc) {
-          y<- data$obs_obs_obs[data$location == xx]
-          this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
-          tab_stat<-rbind(tab_stat,this.ts)
-        }
-        values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-        data$new<-data$obs_obs_obs
-        data$new[data$location == names.impact]<- round(a_new + b_new * values_adj)
-        names(data)[length(data)]<-paste0("L.imp_",magVAR,"_",magMD)
+          data$new<-data$obs_obs_obs
+          for (aa in up) {
+            this.control<-data[data$location != names.impact & data$place == aa,]
+            l.out<-length(data$obs_obs_obs[data$location == names.impact & data$place == aa])
+            base <- seq(-l.out/2, l.out/2, length.out = l.out)
+            tab_stat<-data.frame()
+            for (cc in ulmc) {
+              y<- this.control[this.control$location == cc,]
+              this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
+              tab_stat<-rbind(tab_stat,this.ts)
+            }
+            values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+            a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
+            data$new[data$location == names.impact & data$place == aa]<- round(a_new + b_new * values_adj)
+          }
+          names(data)[names(data) == "new"]<-paste0("L.imp_",magVAR,"_",magMD)
 
         ### LOCAL-SPECIFIC SCALE IMPACT
-        md_la1<- mean(data$obs_obs_obs[data$location != names.impact & data$place == place1]) # md from controls a1
-        a_new<-(md_la1 * (1 + magMD)) - b_new * md_la1
-        l.out<-length(data$obs_obs_obs[data$location != names.impact & data$place == place1])/length(ulmc)
-        base <- seq(-l.out/2, l.out/2, length.out = l.out)
-        tab_stat<-data.frame()
-        for (xx in ulmc) {
-          y<- data$obs_obs_obs[data$location == xx & data$place == place1]
-          this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
-          tab_stat<-rbind(tab_stat,this.ts)
-        }
-        values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-        data$new<-data$obs_obs_obs
-        data$new[data$location == names.impact & data$place == place1]<- round(a_new + b_new * values_adj)
-        names(data)[length(data)]<-paste0("LA.imp_",magVAR,"_",magMD)
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact & data$place == place1,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact & data$place == place1])
+          base <- seq(-l.out/2, l.out/2, length.out = l.out)
+          tab_stat<-data.frame()
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
+            tab_stat<-rbind(tab_stat,this.ts)
+          }
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
+          data$new[data$location == names.impact & data$place == place1]<- round(a_new + b_new * values_adj)
+          names(data)[names(data) == "new"]<-paste0("LA.imp_",magVAR,"_",magMD)
 
         if(n.fspac == 3) {
           ### GENERALIZED SITE-SCALE IMPACT
-          md_s1<-mean(data$obs_obs_obs[data$location != names.impact & data$site == site1]) # md from controls s1
-          a_new<-(md_s1 * (1 + magMD)) - b_new * md_s1
-          l.out<-length(data$obs_obs_obs[data$location != names.impact & data$site == site1])/length(ulmc)
-          base <- seq(-l.out/2, l.out/2, length.out = l.out)
-          tab_stat<-data.frame()
-          for (xx in ulmc) {
-            y<- data$obs_obs_obs[data$location == xx & data$site == site1]
-            this.ts<-data.frame(term = xx,media = mean(y),desvio_padrao = sd(y))
-            tab_stat<-rbind(tab_stat,this.ts)
-          }
-          values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
           data$new<-data$obs_obs_obs
-          data$new[data$location == names.impact & data$site == site1]<- round(a_new + b_new * values_adj)
-          names(data)[length(data)]<-paste0("S.imp_",magVAR,"_",magMD)
+          for (aa in up) {
+            this.control<-data[data$location != names.impact & data$site == site1 & data$place == aa,]
+            l.out<-length(data$obs_obs_obs[data$location == names.impact & data$site == site1 & data$place == aa])
+            base <- seq(-l.out/2, l.out/2, length.out = l.out)
+            tab_stat<-data.frame()
+            for (cc in ulmc) {
+              y<- this.control[this.control$location == cc,]
+              this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
+              tab_stat<-rbind(tab_stat,this.ts)
+            }
+            values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+            a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
+            data$new[data$location == names.impact & data$site == site1 & data$place == aa]<- round(a_new + b_new * values_adj)
+          }
+          names(data)[names(data) == "new"]<-paste0("S.imp_",magVAR,"_",magMD)
 
           ### SITE-SPECIFIC SCALE IMPACT
-          md_s1a1<-mean(data$obs_obs_obs[data$location != names.impact & data$site == site1 & data$place == place1]) # md from controls s1a1
-          a_new<-(md_s1a1 * (1 + magMD)) - b_new * md_s1a1
-          l.out<-length(data$obs_obs_obs[data$location != names.impact & data$site == site1 & data$place == place1])/length(ulmc)
+          data$new<-data$obs_obs_obs
+          this.control<-data[data$location != names.impact & data$site == site1 & data$place == place1,]
+          l.out<-length(data$obs_obs_obs[data$location == names.impact & data$site == site1 & data$place == place1])
           base <- seq(-l.out/2, l.out/2, length.out = l.out)
           tab_stat<-data.frame()
-          for (xx in ulmc) {
-            y<- data$obs_obs_obs[data$location == xx & data$site == site1 & data$place == place1]
-            this.ts<-data.frame(term = xx, media = mean(y), desvio_padrao = sd(y))
+          for (cc in ulmc) {
+            y<- this.control[this.control$location == cc,]
+            this.ts<-data.frame(term = cc, media = mean(y$obs_obs_obs), variancia = var(y$obs_obs_obs))
             tab_stat<-rbind(tab_stat,this.ts)
           }
-          values_adj <- mean(tab_stat$media) + base * mean(tab_stat$desvio_padrao) / sd(base)
-          data$new<-data$obs_obs_obs
+          values_adj <- mean(tab_stat$media) + base * sqrt(mean(tab_stat$variancia)) / sd(base)
+          a_new<-(mean(tab_stat$media) * (1 + magMD)) - b_new * mean(tab_stat$media)
           data$new[data$location == names.impact & data$site == site1 & data$place == place1]<- round(a_new + b_new * values_adj)
-          names(data)[length(data)]<-paste0("SA.imp_",magVAR,"_",magMD)
+          names(data)[names(data) == "new"]<-paste0("SA.imp_",magVAR,"_",magMD)
         }
       }
       }
